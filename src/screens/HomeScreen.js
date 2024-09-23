@@ -4,8 +4,9 @@ import {moderateScale, moderateVerticalScale} from 'react-native-size-matters';
 import {PRIMARY, SECONDARY, TERTIARY} from '../constants/colors';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import TopTabs from '../components/TopTabs';
+import FoodCards from '../components/FoodCards';
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   return (
     <View
       style={{
@@ -44,7 +45,8 @@ const HomeScreen = () => {
         </Text>
       </View>
 
-      <TopTabs  />
+      <FoodCards />
+      {/* <TopTabs  /> */}
     </View>
   );
 };

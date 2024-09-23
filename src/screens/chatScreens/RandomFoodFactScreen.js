@@ -8,7 +8,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import ChatScreenLogo from '../../components/ChatScreenLogo';
 
 import {
@@ -26,13 +26,15 @@ import {
   SECONDARY,
   TERTIARY,
 } from '../../constants/colors';
+import {useFocusEffect} from '@react-navigation/native';
 
 const RandomFoodFactScreen = () => {
   const [isLoading, setIsLoading] = useState('');
   const [chats, setChats] = useState([]);
-  const [inputMessage, setInputMessage] = useState('Give me a food fact');
+  const [inputMessage, setInputMessage] = useState('Start');
   const apiKey = API_KEY;
   const genAI = new GoogleGenerativeAI(apiKey);
+  // const isFocus = useFocusEffect();
 
   const generationConfig = {
     temperature: 1,
@@ -41,6 +43,10 @@ const RandomFoodFactScreen = () => {
     maxOutputTokens: 8192,
     responseMimeType: 'text/plain',
   };
+
+  useEffect(() => {
+    randomFootFact();
+  }, []);
 
   const randomFootFact = async () => {
     setIsLoading(true);
@@ -59,7 +65,7 @@ const RandomFoodFactScreen = () => {
       const result = await model.generateContent(prompt);
 
       // Send back the model's response
-      console.log(result.response.text());
+      // console.log(result.response.text());
 
       const aiMessage = {role: 'ai', content: result.response.text()};
 

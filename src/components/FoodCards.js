@@ -12,8 +12,10 @@ import {DARK, PRIMARY, SECONDARY, TERTIARY} from '../constants/colors';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {featuresTitle} from '../constants/featuresTitle';
 import {MasonryFlashList} from '@shopify/flash-list';
+import {useNavigation} from '@react-navigation/native';
 
-const FoodCards = ({navigation}) => {
+const FoodCards = () => {
+  const navigation = useNavigation();
   return (
     <View style={styles.cardContainer}>
       <MasonryFlashList

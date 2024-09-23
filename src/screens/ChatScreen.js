@@ -6,9 +6,7 @@ import {
   TextInput,
   View,
   TouchableOpacity,
-  KeyboardAvoidingView,
   ActivityIndicator,
-  ToastAndroid,
 } from 'react-native';
 import React, {useState} from 'react';
 import {moderateScale} from 'react-native-size-matters';
@@ -28,27 +26,34 @@ import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
-import {dummyChats} from '../constants/dummyChats';
-import axios from 'axios';
-import {
-  GoogleGenerativeAI,
-  HarmCategory,
-  HarmBlockThreshold,
-} from '@google/generative-ai';
-import {API_KEY} from '../constants/geminiapikey';
+import {GoogleGenerativeAI} from '@google/generative-ai';
+import {API_KEY, BB_API_KEY} from '../constants/geminiapikey';
 
 import {launchImageLibrary} from 'react-native-image-picker';
 import LottieView from 'lottie-react-native';
+import FitImage from 'react-native-fit-image';
+import {GoogleAIFileManager} from '@google/generative-ai/server';
 
 const ChatScreen = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadImageLoading, setUploadImageLoading] = useState(false);
+
   const [showCameraBox, setShowCameraBox] = useState(false);
   const [chats, setChats] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
 
+  // Add image states and functions
+  const [image, setImage] = useState('');
+  const [imageUri, setImageUri] = useState(
+    // 'https://facebook.github.io/react-native/docs/assets/favicon.png',
+    '',
+  );
+  const [imageDetail, setImageDetails] = useState(null);
+  const [base64Image, setBase64Image] = useState('');
+
   const apiKey = API_KEY;
   const genAI = new GoogleGenerativeAI(apiKey);
+  const fileManager = new GoogleAIFileManager(apiKey);
 
   const generationConfig = {
     temperature: 1,
@@ -60,13 +65,26 @@ const ChatScreen = ({navigation}) => {
 
   const chatFunctions = async () => {
     setIsLoading(true);
+
+    console.log('inside chat');
+
+    const uploadResult = await fileManager.uploadFile(`${image}/jetpack.jpg`, {
+      mimeType: 'image/jpeg',
+      displayName: 'Jetpack drawing',
+    });
+    // View the response.
+    console.log(
+      `Uploaded file ${uploadResult.file.displayName} as: ${uploadResult.file.uri}`,
+    );
+
     const model = genAI.getGenerativeModel({
       model: 'gemini-1.5-flash',
-      systemInstruction: `Give me random food fact related to health, nothing else and don't use markdown language`,
+      // systemInstruction: `Give me random food fact related to health, nothing else and don't use markdown language`,
     });
 
     setInputMessage('');
-    // Defining history here because, don't want to applend the latest input into the hitory
+
+    // Define and update history to keep context
     const history = chats;
 
     const userMessage = {role: 'user', parts: [{text: inputMessage}]};
@@ -75,19 +93,69 @@ const ChatScreen = ({navigation}) => {
     try {
       const chatSession = model.startChat({
         generationConfig,
-        history: history,
+        history: [
+          {
+            role: 'user',
+            parts: [{text: 'hii'}],
+          },
+          {
+            role: 'model',
+            parts: [{text: 'Hello! 👋 \n'}],
+          },
+          {
+            role: 'user',
+            parts: [
+              {
+                fileData: {
+                  mimeType: 'image/jpeg',
+                  fileUri: 'https://i.ibb.co/SQLB39N/car.jpg',
+                },
+              },
+              {text: 'color ?'},
+            ],
+          },
+          {
+            role: 'model',
+            parts: [{text: 'The colors are green, red, and white. \n'}],
+          },
+        ],
       });
 
       const result = await chatSession.sendMessage(inputMessage);
+      console.log(result.response.text());
 
-      // console.log(result.response.text());
+      // let result;
 
-      const aiMessage = {
-        role: 'model',
-        parts: [{text: result.response.text()}],
-      };
+      // if (base64Image === '') {
+      //   // If there's no image, send the text message
+      //   result = await chatSession.sendMessage({text: inputMessage});
+      // } else {
+      //   // Process image along with the message and add the image to history
+      //   const image = {
+      //     inlineData: {
+      //       data: base64Image,
+      //       mimeType: 'image/png',
+      //     },
+      //   };
 
-      setChats(prevChat => [...prevChat, aiMessage]);
+      //   // Send both the text and the image in one message
+      //   const aiResponse = await chatSession.sendMessage([inputMessage, image]);
+
+      //   // Add image and AI response to the history
+      //   result = aiResponse;
+      //   const imageMessage = {
+      //     role: 'model',
+      //     parts: [{fileData: image}], // Track the image in history
+      //   };
+      //   setChats(prevChats => [...prevChats, imageMessage]);
+      // }
+
+      // // Add AI response to the chat
+      // const aiMessage = {
+      //   role: 'model',
+      //   parts: [{text: result.response.text()}],
+      // };
+      // setChats(prevChats => [...prevChats, aiMessage]);
     } catch (error) {
       console.log('ERROR ---->  ', error);
     } finally {
@@ -95,18 +163,62 @@ const ChatScreen = ({navigation}) => {
     }
   };
 
-  const [uploadImageModel, setUploadImageModel] = useState(false);
-  const [uploadImageLoading, setUploadImageLoading] = useState(false);
-  // Add image states and functions
-  const [image, setImage] = useState('');
-  const [imageDetail, setImageDetails] = useState(null);
-  const [images, setImages] = useState([]);
-  const [base64Image, setBase64Image] = useState('');
+  const uploadImageToBB = async imageDetail => {
+    const url = `https://api.imgbb.com/1/upload?key=${BB_API_KEY}`;
+
+    setUploadImageLoading(true);
+
+    if (imageDetail === null) {
+      // setUploadImageModel(false);
+      setUploadImageLoading(false);
+      ToastAndroid.show('You need to select image for upload', 1000);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', {
+      uri: imageDetail.assets?.[0]?.uri,
+      type: imageDetail.assets?.[0]?.type,
+      name: imageDetail.assets?.[0]?.fileName,
+      fileName: imageDetail.assets?.[0]?.fileName,
+    });
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      const res = await response.json();
+      // console.log(res);
+      if (response.ok) {
+        console.log('Response --> ', res);
+        console.log('print the uri ', res.data.url);
+        const imageUrl = res.data.url;
+        setImageUri(imageUrl);
+        // setImages([...images, imageUrl]);
+        // setImages(prevImages => [imageUrl, ...prevImages]);
+        setUploadImageLoading(false);
+      } else {
+        console.error('Upload failed:', res);
+        setUploadImageLoading(false);
+        if (res.error) {
+          console.error('Error:', res.error.message);
+        }
+      }
+    } catch (e) {
+      console.error('Error --> ', e);
+      setUploadImageLoading(false);
+    }
+  };
 
   const openImagePicker = async () => {
     const options = {
       mediaType: 'photo',
-      includeBase64: false,
+      includeBase64: true,
       maxHeight: 2000,
       maxWidth: 2000,
       selectionLimit: 1,
@@ -116,8 +228,8 @@ const ChatScreen = ({navigation}) => {
     const imageUri = result.uri || result.assets?.[0]?.uri;
     const base64String = result.assets?.[0]?.base64; // Get the base64 string
 
-    console.log('Image --->', result);
-    console.log('ImageURL --->', imageUri);
+    // console.log('Image --->', result);
+    // console.log('ImageURL --->', imageUri);
     // console.log('Base64 --->', base64String);
 
     if (result.didCancel) {
@@ -128,6 +240,7 @@ const ChatScreen = ({navigation}) => {
       setImage(imageUri);
       setImageDetails(result);
       setBase64Image(base64String);
+      uploadImageToBB(result);
     }
   };
 
@@ -305,9 +418,35 @@ const ChatScreen = ({navigation}) => {
             flex: 1,
             borderRadius: 20,
             paddingHorizontal: moderateScale(10),
-            flexDirection: 'row',
+            flexDirection: 'column',
             justifyContent: 'space-between',
           }}>
+          {imageUri != '' && (
+            <View
+              style={{
+                borderWidth: 0.5,
+                height: moderateScale(50),
+                width: moderateScale(50),
+                margin: moderateScale(5),
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              {uploadImageLoading ? (
+                <ActivityIndicator />
+              ) : (
+                <FitImage
+                  source={{
+                    uri: imageUri,
+                  }}
+                  style={{
+                    height: moderateScale(50),
+                    width: moderateScale(50),
+                  }}
+                />
+              )}
+            </View>
+          )}
+
           <TextInput
             multiline
             placeholder="Type a message"
