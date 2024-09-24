@@ -32,28 +32,24 @@ import {API_KEY, BB_API_KEY} from '../constants/geminiapikey';
 import {launchImageLibrary} from 'react-native-image-picker';
 import LottieView from 'lottie-react-native';
 import FitImage from 'react-native-fit-image';
-import {GoogleAIFileManager} from '@google/generative-ai/server';
+import {dummyChats} from '../constants/dummyChats';
 
 const ChatScreen = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadImageLoading, setUploadImageLoading] = useState(false);
 
   const [showCameraBox, setShowCameraBox] = useState(false);
-  const [chats, setChats] = useState([]);
+  const [chats, setChats] = useState([1]);
+  const [imageArray, setimageArray] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
 
   // Add image states and functions
-  const [image, setImage] = useState('');
-  const [imageUri, setImageUri] = useState(
-    // 'https://facebook.github.io/react-native/docs/assets/favicon.png',
-    '',
-  );
   const [imageDetail, setImageDetails] = useState(null);
   const [base64Image, setBase64Image] = useState('');
+  const [showImageInChat, setShowImageInChat] = useState('');
 
   const apiKey = API_KEY;
   const genAI = new GoogleGenerativeAI(apiKey);
-  const fileManager = new GoogleAIFileManager(apiKey);
 
   const generationConfig = {
     temperature: 1,
@@ -67,15 +63,6 @@ const ChatScreen = ({navigation}) => {
     setIsLoading(true);
 
     console.log('inside chat');
-
-    const uploadResult = await fileManager.uploadFile(`${image}/jetpack.jpg`, {
-      mimeType: 'image/jpeg',
-      displayName: 'Jetpack drawing',
-    });
-    // View the response.
-    console.log(
-      `Uploaded file ${uploadResult.file.displayName} as: ${uploadResult.file.uri}`,
-    );
 
     const model = genAI.getGenerativeModel({
       model: 'gemini-1.5-flash',
@@ -91,38 +78,41 @@ const ChatScreen = ({navigation}) => {
     setChats(prevChats => [...prevChats, userMessage]);
 
     try {
-      const chatSession = model.startChat({
-        generationConfig,
-        history: [
-          {
-            role: 'user',
-            parts: [{text: 'hii'}],
-          },
-          {
-            role: 'model',
-            parts: [{text: 'Hello! 👋 \n'}],
-          },
-          {
-            role: 'user',
-            parts: [
-              {
-                fileData: {
-                  mimeType: 'image/jpeg',
-                  fileUri: 'https://i.ibb.co/SQLB39N/car.jpg',
-                },
-              },
-              {text: 'color ?'},
-            ],
-          },
-          {
-            role: 'model',
-            parts: [{text: 'The colors are green, red, and white. \n'}],
-          },
-        ],
-      });
+      console.log('inside try block -------> ');
+      // const chatSession = model.startChat({
+      //   generationConfig,
+      //   history: [
+      //     {
+      //       role: 'user',
+      //       parts: [{text: 'hii'}],
+      //     },
+      //     {
+      //       role: 'model',
+      //       parts: [{text: 'Hello! 👋 \n'}],
+      //     },
+      //     {
+      //       role: 'user',
+      //       parts: [
+      //         {
+      //           inlineData: {
+      //             data: base64Image,
+      //             mimeType: 'image/jpeg',
+      //           },
+      //         },
+      //         {text: 'color ?'},
+      //       ],
+      //     },
+      //     {
+      //       role: 'model',
+      //       parts: [{text: 'black \n'}],
+      //     },
+      //   ],
+      // });
 
-      const result = await chatSession.sendMessage(inputMessage);
-      console.log(result.response.text());
+      // const result = await chatSession.sendMessage(inputMessage);
+
+      // console.log('below is the result of the prompt ');
+      // console.log(result.response.text());
 
       // let result;
 
@@ -157,61 +147,10 @@ const ChatScreen = ({navigation}) => {
       // };
       // setChats(prevChats => [...prevChats, aiMessage]);
     } catch (error) {
+      console.log('inside catch block -------> ');
       console.log('ERROR ---->  ', error);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const uploadImageToBB = async imageDetail => {
-    const url = `https://api.imgbb.com/1/upload?key=${BB_API_KEY}`;
-
-    setUploadImageLoading(true);
-
-    if (imageDetail === null) {
-      // setUploadImageModel(false);
-      setUploadImageLoading(false);
-      ToastAndroid.show('You need to select image for upload', 1000);
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('image', {
-      uri: imageDetail.assets?.[0]?.uri,
-      type: imageDetail.assets?.[0]?.type,
-      name: imageDetail.assets?.[0]?.fileName,
-      fileName: imageDetail.assets?.[0]?.fileName,
-    });
-
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      const res = await response.json();
-      // console.log(res);
-      if (response.ok) {
-        console.log('Response --> ', res);
-        console.log('print the uri ', res.data.url);
-        const imageUrl = res.data.url;
-        setImageUri(imageUrl);
-        // setImages([...images, imageUrl]);
-        // setImages(prevImages => [imageUrl, ...prevImages]);
-        setUploadImageLoading(false);
-      } else {
-        console.error('Upload failed:', res);
-        setUploadImageLoading(false);
-        if (res.error) {
-          console.error('Error:', res.error.message);
-        }
-      }
-    } catch (e) {
-      console.error('Error --> ', e);
-      setUploadImageLoading(false);
     }
   };
 
@@ -233,14 +172,11 @@ const ChatScreen = ({navigation}) => {
     // console.log('Base64 --->', base64String);
 
     if (result.didCancel) {
-      setImage('');
       setImageDetails(null);
       setBase64Image('');
     } else {
-      setImage(imageUri);
       setImageDetails(result);
       setBase64Image(base64String);
-      uploadImageToBB(result);
     }
   };
 
@@ -331,7 +267,7 @@ const ChatScreen = ({navigation}) => {
               padding: moderateScale(10),
             }}
             showsVerticalScrollIndicator={false}>
-            {chats.map((message, index) => (
+            {/* {chats.map((message, index) => (
               <View
                 key={index}
                 style={[
@@ -341,6 +277,33 @@ const ChatScreen = ({navigation}) => {
                     : styles.aiMessage,
                 ]}>
                 <Text style={styles.messageText}>{message.parts[0].text}</Text>
+              </View>
+            ))} */}
+            {dummyChats.map((message, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.messageBubble,
+                  message.role === 'user'
+                    ? styles.userMessage
+                    : styles.aiMessage,
+                ]}>
+                {message.parts[0].inlineData && (
+                  <FitImage
+                    source={{
+                      uri: message.parts[0].inlineData.data,
+                    }}
+                    style={{
+                      height: moderateScale(100),
+                      width: moderateScale(150),
+                      margin: moderateScale(10),
+                      borderRadius: 20,
+                    }}
+                  />
+                )}
+                <Text style={styles.messageText}>
+                  {message.parts[0].text || message.parts[1].text}
+                </Text>
               </View>
             ))}
           </ScrollView>
@@ -421,12 +384,12 @@ const ChatScreen = ({navigation}) => {
             flexDirection: 'column',
             justifyContent: 'space-between',
           }}>
-          {imageUri != '' && (
+          {base64Image != '' && (
             <View
               style={{
                 borderWidth: 0.5,
-                height: moderateScale(50),
-                width: moderateScale(50),
+                height: moderateScale(80),
+                width: moderateScale(100),
                 margin: moderateScale(5),
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -434,15 +397,38 @@ const ChatScreen = ({navigation}) => {
               {uploadImageLoading ? (
                 <ActivityIndicator />
               ) : (
-                <FitImage
-                  source={{
-                    uri: imageUri,
-                  }}
-                  style={{
-                    height: moderateScale(50),
-                    width: moderateScale(50),
-                  }}
-                />
+                <>
+                  {/* Remove Image */}
+                  <TouchableOpacity
+                    onPress={() => setBase64Image('')}
+                    style={{
+                      position: 'absolute',
+                      zIndex: 1,
+                      top: 0,
+                      right: 0,
+                      backgroundColor: 'red',
+                      width: moderateScale(15),
+                      height: moderateScale(15),
+                      borderRadius: moderateScale(8),
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Ionicons
+                      name="close"
+                      size={moderateScale(13)}
+                      color={PRIMARY}
+                    />
+                  </TouchableOpacity>
+                  <FitImage
+                    source={{
+                      uri: `data:image/png;base64,${base64Image}`,
+                    }}
+                    style={{
+                      height: moderateScale(80),
+                      width: moderateScale(100),
+                    }}
+                  />
+                </>
               )}
             </View>
           )}
@@ -470,13 +456,19 @@ const ChatScreen = ({navigation}) => {
           ) : (
             <TouchableOpacity
               onPress={() => {
-                inputMessage === '' ? null : chatFunctions();
+                inputMessage === '' && base64Image === ''
+                  ? null
+                  : chatFunctions();
               }}
               style={styles.sendButton}>
               <Ionicons
                 name="send"
                 size={moderateScale(15)}
-                color={inputMessage === '' ? 'lightgray' : PRIMARY}
+                color={
+                  inputMessage === '' && base64Image === ''
+                    ? 'lightgray'
+                    : PRIMARY
+                }
               />
             </TouchableOpacity>
           )}
@@ -528,3 +520,57 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+// scraps
+// const uploadImageToBB = async imageDetail => {
+//   const url = `https://api.imgbb.com/1/upload?key=${BB_API_KEY}`;
+
+//   setUploadImageLoading(true);
+
+//   if (imageDetail === null) {
+//     // setUploadImageModel(false);
+//     setUploadImageLoading(false);
+//     ToastAndroid.show('You need to select image for upload', 1000);
+//     return;
+//   }
+
+//   const formData = new FormData();
+//   formData.append('image', {
+//     uri: imageDetail.assets?.[0]?.uri,
+//     type: imageDetail.assets?.[0]?.type,
+//     name: imageDetail.assets?.[0]?.fileName,
+//     fileName: imageDetail.assets?.[0]?.fileName,
+//   });
+
+//   try {
+//     console.log('indide bb upload try ');
+//     const response = await fetch(url, {
+//       method: 'POST',
+//       body: formData,
+//       headers: {
+//         'Content-Type': 'multipart/form-data',
+//       },
+//     });
+
+//     const res = await response.json();
+//     // console.log(res);
+//     if (response.ok) {
+//       console.log('Response --> ', res);
+//       console.log('print the uri ', res.data.url);
+//       const imageUrl = res.data.url;
+//       setImageUri(imageUrl);
+//       // setImages([...images, imageUrl]);
+//       // setImages(prevImages => [imageUrl, ...prevImages]);
+//       setUploadImageLoading(false);
+//     } else {
+//       console.error('Upload failed:', res);
+//       setUploadImageLoading(false);
+//       if (res.error) {
+//         console.error('Error:', res.error.message);
+//       }
+//     }
+//   } catch (e) {
+//     console.error('Error --> ', e);
+//     setUploadImageLoading(false);
+//   }
+// };
