@@ -187,6 +187,7 @@ const styles = StyleSheet.create({
   sendButton: {
     paddingHorizontal: 15,
     backgroundColor: TERTIARY,
+    // backgroundColor: DARK,
     borderRadius: 20,
     marginLeft: 10,
     maxHeight: moderateScale(50),
@@ -198,7 +199,7 @@ const styles = StyleSheet.create({
   sendButtonText: {
     color: DARK,
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: moderateScale(16),
   },
 });
 const markdownStyles = StyleSheet.create({

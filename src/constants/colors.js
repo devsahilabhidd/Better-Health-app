@@ -2,6 +2,7 @@
 // export const SECONDARY = '#ffffff';
 
 const light = false;
+// const light = true;
 export const DARK = '#000000';
 export const LIGHT = '#ffffff';
 // export const LIGHT_GREEN = '#66ffc2';

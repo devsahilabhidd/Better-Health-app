@@ -7,8 +7,9 @@ import {
   View,
   TouchableOpacity,
   ActivityIndicator,
+  Image,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {moderateScale} from 'react-native-size-matters';
 import {
   BACKGROUND_COLOR,
@@ -33,23 +34,86 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import LottieView from 'lottie-react-native';
 import FitImage from 'react-native-fit-image';
 import {dummyChats} from '../constants/dummyChats';
+import Markdown from 'react-native-markdown-display';
 
 const ChatScreen = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadImageLoading, setUploadImageLoading] = useState(false);
 
   const [showCameraBox, setShowCameraBox] = useState(false);
-  const [chats, setChats] = useState([1]);
+  const [chats, setChats] = useState([]);
   const [imageArray, setimageArray] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
+  const [history, setHistory] = useState([]);
 
   // Add image states and functions
   const [imageDetail, setImageDetails] = useState(null);
   const [base64Image, setBase64Image] = useState('');
-  const [showImageInChat, setShowImageInChat] = useState('');
 
   const apiKey = API_KEY;
   const genAI = new GoogleGenerativeAI(apiKey);
+
+  const addChatToHistory = (role, base64Image, text) => {
+    // If both text and base64Image are present
+    if (base64Image && text) {
+      // Clear images from the states
+      setBase64Image('');
+      setImageDetails(null);
+
+      const latestImage = imageArray[imageArray.length - 1];
+      console.log('lastest image printing here =====> ', latestImage.type);
+
+      const dataInput = {
+        role: role,
+        parts: [
+          {
+            inlineData: {
+              data: latestImage.base64,
+              mimeType: latestImage.type,
+            },
+          },
+          {
+            text: text,
+          },
+        ],
+      };
+
+      setChats(prevChats => [...prevChats, dataInput]);
+    }
+    // If only base64Image is present
+    else if (base64Image) {
+      // Clear images from the states
+      setBase64Image('');
+      setImageDetails(null);
+
+      const latestImage = imageArray[imageArray.length - 1];
+      console.log('lastest image printing here =====> ', latestImage.type);
+
+      const addImage = {
+        role: role,
+        parts: [
+          {
+            inlineData: {
+              data: latestImage.base64,
+              mimeType: latestImage.type,
+            },
+          },
+        ],
+      };
+
+      console.log('printing image array ----------> ', imageArray[0].type);
+
+      setChats(prevChats => [...prevChats, addImage]); // Add the new chat
+    }
+    // If only text is present
+    else if (text) {
+      const userMessage = {role: role, parts: [{text: text}]};
+      setChats(prevChats => [...prevChats, userMessage]);
+    }
+
+    setInputMessage('');
+    console.log(chats);
+  };
 
   const generationConfig = {
     temperature: 1,
@@ -58,8 +122,7 @@ const ChatScreen = ({navigation}) => {
     maxOutputTokens: 8192,
     responseMimeType: 'text/plain',
   };
-
-  const chatFunctions = async () => {
+  const chatFunctions = async => {
     setIsLoading(true);
 
     console.log('inside chat');
@@ -68,14 +131,6 @@ const ChatScreen = ({navigation}) => {
       model: 'gemini-1.5-flash',
       // systemInstruction: `Give me random food fact related to health, nothing else and don't use markdown language`,
     });
-
-    setInputMessage('');
-
-    // Define and update history to keep context
-    const history = chats;
-
-    const userMessage = {role: 'user', parts: [{text: inputMessage}]};
-    setChats(prevChats => [...prevChats, userMessage]);
 
     try {
       console.log('inside try block -------> ');
@@ -176,7 +231,9 @@ const ChatScreen = ({navigation}) => {
       setBase64Image('');
     } else {
       setImageDetails(result);
+      // console.log('image Details ------> : ', result.assets?.[0]);
       setBase64Image(base64String);
+      setimageArray(preImage => [...preImage, result.assets?.[0]]);
     }
   };
 
@@ -254,6 +311,7 @@ const ChatScreen = ({navigation}) => {
           marginBottom: moderateScale(20),
           height: '80%',
         }}>
+        {/* Lottie Animation here */}
         {Array.isArray(chats) && chats.length === 0 ? (
           <LottieView
             style={{flex: 1}}
@@ -267,44 +325,53 @@ const ChatScreen = ({navigation}) => {
               padding: moderateScale(10),
             }}
             showsVerticalScrollIndicator={false}>
-            {/* {chats.map((message, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.messageBubble,
-                  message.role === 'user'
-                    ? styles.userMessage
-                    : styles.aiMessage,
-                ]}>
-                <Text style={styles.messageText}>{message.parts[0].text}</Text>
-              </View>
-            ))} */}
-            {dummyChats.map((message, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.messageBubble,
-                  message.role === 'user'
-                    ? styles.userMessage
-                    : styles.aiMessage,
-                ]}>
-                {message.parts[0].inlineData && (
-                  <FitImage
-                    source={{
-                      uri: message.parts[0].inlineData.data,
-                    }}
-                    style={{
-                      height: moderateScale(100),
-                      width: moderateScale(150),
-                      margin: moderateScale(10),
-                      borderRadius: 20,
-                    }}
-                  />
+            {chats.map((message, index) => (
+              <>
+                {message.parts !== undefined &&
+                  message.parts[0]?.inlineData && (
+                    <View
+                      style={{
+                        alignSelf: 'flex-end',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: moderateScale(150),
+                        width: moderateScale(150),
+                        marginTop: moderateScale(10),
+                      }}>
+                      <Image
+                        resizeMode="cover"
+                        source={{
+                          uri: `data:${message.parts[0].inlineData.type};base64,${message.parts[0].inlineData.data}`,
+                        }}
+                        style={{
+                          height: '100%',
+                          width: '100%',
+                          margin: moderateScale(10),
+                          borderRadius: moderateScale(10),
+                        }}
+                      />
+                    </View>
+                  )}
+
+                {/* If the prompt is empty then don't show anything */}
+                {(message.parts?.[0]?.text || message.parts?.[1]?.text) ===
+                undefined ? null : (
+                  <View
+                    key={index}
+                    style={[
+                      styles.messageBubble,
+                      message.role === 'user'
+                        ? styles.userMessage
+                        : styles.aiMessage,
+                    ]}>
+                    <Text style={styles.messageText}>
+                      {message.parts?.[0]?.text ||
+                        message.parts?.[1]?.text ||
+                        'No prompt'}
+                    </Text>
+                  </View>
                 )}
-                <Text style={styles.messageText}>
-                  {message.parts[0].text || message.parts[1].text}
-                </Text>
-              </View>
+              </>
             ))}
           </ScrollView>
         )}
@@ -387,10 +454,9 @@ const ChatScreen = ({navigation}) => {
           {base64Image != '' && (
             <View
               style={{
-                borderWidth: 0.5,
                 height: moderateScale(80),
                 width: moderateScale(100),
-                margin: moderateScale(5),
+                marginTop: moderateScale(10),
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
@@ -400,32 +466,47 @@ const ChatScreen = ({navigation}) => {
                 <>
                   {/* Remove Image */}
                   <TouchableOpacity
-                    onPress={() => setBase64Image('')}
+                    onPress={() => {
+                      setBase64Image('');
+                      imageArray.pop();
+                      console.log(imageArray);
+                    }}
                     style={{
                       position: 'absolute',
                       zIndex: 1,
                       top: 0,
                       right: 0,
                       backgroundColor: 'red',
-                      width: moderateScale(15),
-                      height: moderateScale(15),
-                      borderRadius: moderateScale(8),
+                      width: moderateScale(25),
+                      height: moderateScale(25),
+                      borderRadius: moderateScale(12),
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}>
                     <Ionicons
                       name="close"
-                      size={moderateScale(13)}
+                      size={moderateScale(20)}
                       color={PRIMARY}
                     />
                   </TouchableOpacity>
-                  <FitImage
+                  {/* <FitImage
                     source={{
                       uri: `data:image/png;base64,${base64Image}`,
                     }}
                     style={{
                       height: moderateScale(80),
                       width: moderateScale(100),
+                    }}
+                  /> */}
+                  <Image
+                    resizeMode="cover"
+                    source={{
+                      uri: `data:image/png;base64,${base64Image}`,
+                    }}
+                    style={{
+                      height: '100%',
+                      width: '100%',
+                      borderRadius: moderateScale(10),
                     }}
                   />
                 </>
@@ -456,9 +537,11 @@ const ChatScreen = ({navigation}) => {
           ) : (
             <TouchableOpacity
               onPress={() => {
+                const role = 'user';
                 inputMessage === '' && base64Image === ''
                   ? null
-                  : chatFunctions();
+                  : addChatToHistory(role, imageDetail, inputMessage);
+                // chatFunctions();
               }}
               style={styles.sendButton}>
               <Ionicons
@@ -485,30 +568,34 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     marginVertical: moderateScale(5),
     padding: moderateScale(10),
+    paddingHorizontal: moderateScale(15),
     borderRadius: moderateScale(15),
     // maxWidth: '90%',
   },
   userMessage: {
     alignSelf: 'flex-end',
     backgroundColor: TERTIARY,
-    borderTopRightRadius: 0,
+    // borderTopRightRadius: 0,
     maxWidth: '80%',
+    marginBottom: moderateScale(25),
   },
   aiMessage: {
-    backgroundColor: 'lightgreen',
+    // backgroundColor: 'lightgreen',
     alignSelf: 'flex-start',
-    maxWidth: '90%',
+    maxWidth: '100%',
     marginBottom: moderateScale(15),
   },
   messageText: {
-    fontSize: moderateScale(15),
-    color: DARK,
-    fontWeight: '500',
+    fontSize: moderateScale(16),
+    letterSpacing: 1,
+    // color: DARK,
+    color: SECONDARY,
+    fontWeight: '400',
   },
   sendButton: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 15,
+    paddingHorizontal: moderateScale(15),
     backgroundColor: LIGHT_GREEN,
     height: moderateScale(40),
     width: moderateScale(40),
@@ -517,7 +604,7 @@ const styles = StyleSheet.create({
   },
   sendButtonText: {
     color: PRIMARY,
-    fontSize: 16,
+    fontSize: moderateScale(16),
   },
 });
 
