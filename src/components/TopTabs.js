@@ -5,6 +5,7 @@ import FoodCards from './FoodCards';
 import PersonalCareCards from './PersonalCareCards';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {moderateScale} from 'react-native-size-matters';
+import {featuresTitle, PERSONAL_CARE_TITLES} from '../constants/featuresTitle';
 
 const TopTabs = () => {
   const TopTab = createMaterialTopTabNavigator();
@@ -27,8 +28,16 @@ const TopTabs = () => {
           backgroundColor: PRIMARY,
         },
       }}>
-      <TopTab.Screen name="Food Cards" component={FoodCards} />
-      <TopTab.Screen name="Personal Care Cards" component={PersonalCareCards} />
+      <TopTab.Screen
+        name="Food"
+        component={FoodCards}
+        initialParams={{items: featuresTitle}}
+      />
+      <TopTab.Screen
+        name="Personal Care"
+        component={FoodCards}
+        initialParams={{items: PERSONAL_CARE_TITLES}}
+      />
     </TopTab.Navigator>
   );
 };

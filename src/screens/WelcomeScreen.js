@@ -1,10 +1,12 @@
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {PRIMARY, SECONDARY, TERTIARY} from '../constants/colors';
+import {LIGHT_GREEN, PRIMARY, SECONDARY, TERTIARY} from '../constants/colors';
 import {moderateScale, verticalScale} from 'react-native-size-matters';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-const WelcomeScreen = ({navigation}) => {
+import {useNavigation} from '@react-navigation/native';
+const WelcomeScreen = () => {
+  const navigation = useNavigation();
   return (
     <SafeAreaView
       style={{flex: 1, justifyContent: 'center', backgroundColor: PRIMARY}}>
@@ -15,7 +17,7 @@ const WelcomeScreen = ({navigation}) => {
           width: '100%',
           padding: moderateScale(10),
         }}>
-        <Text
+        {/* <Text
           style={{
             flexDirection: 'row',
             fontWeight: 'bold',
@@ -36,7 +38,7 @@ const WelcomeScreen = ({navigation}) => {
               Health
             </Text>
           </Text>
-        </Text>
+        </Text> */}
       </View>
       <View
         style={{
@@ -51,9 +53,10 @@ const WelcomeScreen = ({navigation}) => {
               textAlign: 'center',
               color: SECONDARY,
               fontWeight: '900',
-              fontSize: moderateScale(50),
+              fontSize: moderateScale(40),
             }}>
-            Empowering <Text style={{color: TERTIARY}}>Informed</Text> Choices
+            Welcome to <Text style={{color: TERTIARY}}>Better Health</Text> Your
+            Personalized Health Assistant
           </Text>
           <Text
             style={{
@@ -62,23 +65,24 @@ const WelcomeScreen = ({navigation}) => {
               fontWeight: '400',
               fontSize: moderateScale(15),
             }}>
-            Better Health is a Gen AI-powered platform that provides
-            personalized, verified insights into the health and environmental
-            impact of consumer goods, promoting conscious and sustainable
-            choices.
+            Empower your health journey with smarter choices.
           </Text>
         </View>
 
         <Pressable
           onPress={() => navigation.navigate('Home')}
-          style={{
-            backgroundColor: TERTIARY,
-            padding: moderateScale(5),
-            width: '90%',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: moderateScale(5),
-          }}>
+          style={({pressed}) => [
+            {
+              backgroundColor: pressed ? LIGHT_GREEN : TERTIARY,
+            },
+            {
+              padding: moderateScale(5),
+              width: '90%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: moderateScale(5),
+            },
+          ]}>
           <Text
             className="text-primary font-bold"
             style={{
@@ -86,7 +90,7 @@ const WelcomeScreen = ({navigation}) => {
               fontSize: moderateScale(20),
               fontWeight: '500',
             }}>
-            Next
+            Home Page
           </Text>
         </Pressable>
       </View>

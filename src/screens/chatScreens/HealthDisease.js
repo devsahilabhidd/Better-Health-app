@@ -10,8 +10,9 @@ import {
   Image,
   ToastAndroid,
 } from 'react-native';
+import Modal from 'react-native-modal';
 import React, {useEffect, useState} from 'react';
-import {moderateScale, verticalScale} from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import {
   BACKGROUND_COLOR,
   DARK,
@@ -20,31 +21,30 @@ import {
   PRIMARY,
   SECONDARY,
   TERTIARY,
-} from '../constants/colors';
+} from '../../constants/colors';
 
 // Icons
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Octicons from 'react-native-vector-icons/Octicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {GoogleGenerativeAI} from '@google/generative-ai';
-import {API_KEY} from '../constants/geminiapikey';
+import {API_KEY} from '../../constants/geminiapikey';
 
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
-import LottieView from 'lottie-react-native';
-import Markdown from 'react-native-markdown-display';
 
-const ChatScreen = ({navigation}) => {
+const HealthDisease = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadImageLoading, setUploadImageLoading] = useState(false);
 
   const [showCameraBox, setShowCameraBox] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const [chats, setChats] = useState([]);
   const [imageArray, setimageArray] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [prompt, setPrompt] = useState('tell me about this image');
-  // const [history, setHistory] = useState([]);
 
   // Add image states and functions
   const [imageDetail, setImageDetails] = useState(null);
@@ -133,7 +133,7 @@ const ChatScreen = ({navigation}) => {
     topP: 0.95,
     topK: 64,
     maxOutputTokens: 8192,
-    responseMimeType: 'text/plain',
+    responseMimeType: 'application/json',
   };
   const chatFunctions = async history => {
     setIsLoading(true);
@@ -142,9 +142,33 @@ const ChatScreen = ({navigation}) => {
 
     const model = genAI.getGenerativeModel({
       model: 'gemini-1.5-flash',
-      systemInstruction: `When analyzing a list of ingredients on a product label, break down each component in a friendly, easy-to-understand way, and in a tabular form. Explain whether each ingredient is good, neutral, or harmful for someone. Provide dietary advice in a supportive tone, suggesting healthier alternatives where needed. Always conclude with a summary that gives clear recommendations while keeping the tone positive and helpful. If possible also try to guess the product. And don't use markdown please`,
+      systemInstruction: `When analyzing a list of ingredients on a product label, break down each component in a friendly, easy-to-understand way, and in a tabular form. Explain whether each ingredient is good, neutral, or harmful for someone. Provide dietary advice in a supportive tone, suggesting healthier alternatives where needed. Always conclude with a summary that gives clear recommendations while keeping the tone positive and helpful. If possible also try to guess the product.
+
+      and If the image or prompt is not related to food then set "isRelevent" to false
+
+      and If the image is not clear or too plurry that It can't be readable then set "isVisible" to false
+
+      and  DO NOT USE MARKDOWN Language
+      
+      THis is the json formate that you need to follow
+      {
+  ingredients: [
+    {
+      ingredient: '',
+      description: '',
+      good_bad_neutral: 'GOOD or BAD or NEUTRAL',
+      advice: '',
+    },
+  ],
+  summary: '',
+  product_guess: '',
+  isRelevent: true/false,
+  isVisible: true/false,
+};
+      `,
     });
 
+    // If you want to use markdown then use this syntax only ${markdownSyntax}
     try {
       const chatSession = model.startChat({
         generationConfig,
@@ -226,6 +250,12 @@ const ChatScreen = ({navigation}) => {
     }
   };
 
+  useEffect(() => {
+    setTimeout(() => {
+      setShowPopup(true);
+    }, 500);
+  }, []);
+
   return (
     <View
       style={{
@@ -303,71 +333,249 @@ const ChatScreen = ({navigation}) => {
         }}>
         {/* Lottie Animation here */}
         {Array.isArray(chats) && chats.length === 0 ? (
-          <LottieView
-            style={{flex: 1}}
-            source={require('../assets/animations/chatScreenAnimation.json')}
-            autoPlay
-            loop
-          />
+          // <LottieView
+          //   style={{flex: 1}}
+          //   source={require('../../assets/animations/chatScreenAnimation.json')}
+          //   autoPlay
+          //   loop
+          // />
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                fontWeight: '900',
+                fontSize: moderateScale(30),
+                color: LIGHT_GREEN,
+              }}>
+              Scan Food Label
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                gap: moderateScale(50),
+                marginVertical: moderateScale(20),
+              }}>
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: moderateScale(5),
+                }}>
+                <TouchableOpacity onPress={openCamera}>
+                  <Feather
+                    name="camera"
+                    size={moderateScale(50)}
+                    color={LIGHT_GREEN}
+                  />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    color: LIGHT_GREEN,
+                    fontSize: moderateScale(15),
+                  }}>
+                  Camera
+                </Text>
+              </View>
+
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: moderateScale(5),
+                }}>
+                <TouchableOpacity onPress={openImagePicker}>
+                  <Feather
+                    name="image"
+                    size={moderateScale(50)}
+                    color={LIGHT_GREEN}
+                  />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    color: LIGHT_GREEN,
+                    fontSize: moderateScale(15),
+                  }}>
+                  Gallery
+                </Text>
+              </View>
+            </View>
+          </View>
         ) : (
           <ScrollView
-            style={{
-              padding: moderateScale(10),
-            }}
+            style={{padding: moderateScale(10)}}
             showsVerticalScrollIndicator={false}>
             {chats.map((message, index) => (
-              <>
-                {message.parts !== undefined &&
-                  message.parts[0]?.inlineData && (
-                    <View
-                      style={{
-                        alignSelf: 'flex-end',
-                        // alignSelf: 'center',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: moderateScale(150),
-                        width: moderateScale(150),
-                        marginTop: moderateScale(10),
-                      }}>
-                      <Image
-                        resizeMode="cover"
-                        source={{
-                          uri: `data:${message.parts[0].inlineData.type};base64,${message.parts[0].inlineData.data}`,
-                        }}
-                        style={{
-                          height: '100%',
-                          width: '100%',
-                          margin: moderateScale(10),
-                          borderRadius: moderateScale(10),
-                        }}
-                      />
-                    </View>
-                  )}
-
-                {/* If the prompt is empty then don't show anything */}
-                {(message.parts?.[0]?.text || message.parts?.[1]?.text) ===
-                undefined ? null : (
+              <View key={index}>
+                {/* Check for inlineData (image) */}
+                {message.parts?.[0]?.inlineData && (
                   <View
-                    key={index}
+                    style={{
+                      alignSelf:
+                        message.role === 'user' ? 'flex-end' : 'flex-start',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      height: moderateScale(150),
+                      width: moderateScale(150),
+                      marginTop: moderateScale(10),
+                    }}>
+                    <Image
+                      resizeMode="cover"
+                      source={{
+                        uri: `data:${message.parts[0].inlineData.type};base64,${message.parts[0].inlineData.data}`,
+                      }}
+                      style={{
+                        height: '100%',
+                        width: '100%',
+                        margin: moderateScale(10),
+                        borderRadius: moderateScale(10),
+                      }}
+                    />
+                  </View>
+                )}
+
+                {/* Check for text and ingredients */}
+                {(message.parts?.[0]?.text || message.parts?.[1]?.text) && (
+                  <View
                     style={[
                       styles.messageBubble,
                       message.role === 'user'
                         ? styles.userMessage
                         : styles.aiMessage,
                     ]}>
-                    <Text style={styles.messageText}>
-                      {message.parts?.[0]?.text ||
-                        message.parts?.[1]?.text ||
-                        'No prompt'}
-                    </Text>
-                    <Markdown>
-                      {message.parts?.[0]?.text ||
-                        message.parts?.[1]?.text ||
-                        'No prompt'}
-                    </Markdown>
+                    {/* // User message  */}
+                    {message.role === 'user' ? (
+                      <Text selectable style={styles.messageText}>
+                        {message.parts?.[0]?.text || message.parts?.[1]?.text}
+                      </Text>
+                    ) : (
+                      // Models respose here
+                      <View>
+                        {JSON.parse(message.parts[0].text)?.isRelevent ===
+                        true ? (
+                          <>
+                            {/* Product guess here */}
+                            {JSON.parse(message.parts[0].text)
+                              ?.product_guess !== null && (
+                              <Text
+                                selectable
+                                style={{
+                                  color: SECONDARY,
+                                  fontSize: moderateScale(20),
+                                  marginVertical: moderateScale(10),
+                                }}>
+                                {
+                                  JSON.parse(message.parts[0].text)
+                                    ?.product_guess
+                                }
+                              </Text>
+                            )}
+                            {/* Product ingredient here */}
+                            {JSON.parse(
+                              message.parts[0].text,
+                            )?.ingredients?.map((item, i) => (
+                              <View
+                                key={i}
+                                style={[
+                                  styles.ingreCard,
+                                  {
+                                    backgroundColor:
+                                      item.good_bad_neutral === 'GOOD'
+                                        ? '#A8E6A3' // Good (Pale Green)
+                                        : item.good_bad_neutral === 'BAD'
+                                        ? '#F28B82' // Bad (Light Red)
+                                        : '#E0E0E0', // Neutral (Light Grey)
+                                  },
+                                ]}>
+                                <Text
+                                  selectable
+                                  style={[
+                                    styles.ingredientText,
+                                    styles.commonTextStyle,
+                                  ]}>
+                                  Ingredient name: {item.ingredient || 'N/A'}
+                                </Text>
+                                <Text
+                                  selectable
+                                  style={[
+                                    styles.descriptionText,
+                                    styles.commonTextStyle,
+                                  ]}>
+                                  Description: {item.description || 'N/A'}
+                                </Text>
+                                <Text
+                                  selectable
+                                  style={[
+                                    styles.good_bad_neutralText,
+                                    styles.commonTextStyle,
+                                  ]}>
+                                  Impact: {item.good_bad_neutral || 'N/A'}
+                                </Text>
+                                <Text
+                                  selectable
+                                  style={[
+                                    styles.adviceText,
+                                    styles.commonTextStyle,
+                                  ]}>
+                                  Advice: {item.advice || 'N/A'}
+                                </Text>
+                              </View>
+                            ))}
+                            {/* // Summary here */}
+                            <View style={{marginVertical: moderateScale(20)}}>
+                              <Text
+                                selectable
+                                style={{
+                                  color: SECONDARY,
+                                  fontSize: moderateScale(25),
+                                }}>
+                                Summary :{' '}
+                              </Text>
+                              <Text
+                                selectable
+                                style={[styles.aiMessage, styles.messageText]}>
+                                {JSON.parse(message.parts[0].text)?.summary}
+                              </Text>
+                            </View>
+                          </>
+                        ) : (
+                          // If response is not related to food health
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              gap: moderateScale(10),
+                              // borderWidth: 1,
+                              justifyContent: 'center',
+                              // alignItems: 'center',
+                              paddingHorizontal: moderateScale(20),
+                            }}>
+                            <MaterialIcons
+                              name="error"
+                              size={moderateScale(25)}
+                              color={'yellow'}
+                            />
+                            <Text
+                              style={{
+                                color: SECONDARY,
+                                fontWeight: '500',
+                                fontSize: moderateScale(15),
+                              }}>
+                              Thank you for your Request! I specialize in
+                              providing information and assistance related to
+                              food and health. If you have any questions in
+                              those areas, feel free to ask, and I'll be happy
+                              to help!
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                    )}
                   </View>
                 )}
-              </>
+              </View>
             ))}
           </ScrollView>
         )}
@@ -568,11 +776,72 @@ const ChatScreen = ({navigation}) => {
           )}
         </View>
       </View>
+
+      <Modal
+        isVisible={showPopup}
+        transparent={true}
+        onBackdropPress={() => setShowPopup(false)}
+        onBackButtonPress={() => setShowPopup(false)}
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <View
+          style={{
+            backgroundColor: TERTIARY,
+            height: moderateScale(200),
+            width: moderateScale(300),
+            borderRadius: moderateScale(20),
+            justifyContent: 'center',
+            padding: moderateScale(15),
+            gap: moderateScale(20),
+          }}>
+          <Text
+            style={{
+              color: LIGHT,
+              fontSize: moderateScale(20),
+              fontWeight: '400',
+            }}>
+            Add some information about you so I can give you more personalized
+            results, btw you can change that anytime.
+          </Text>
+          <View
+            style={{
+              // borderWidth: 1,
+              flexDirection: 'row',
+              padding: moderateScale(10),
+              justifyContent: 'flex-end',
+              gap: moderateScale(40),
+            }}>
+            <TouchableOpacity onPress={() => setShowPopup(false)}>
+              <Text
+                style={{
+                  color: LIGHT,
+                  fontWeight: '500',
+                  fontSize: moderateScale(18),
+                }}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('PersonalInfo')}>
+              <Text
+                style={{
+                  color: LIGHT,
+                  fontWeight: '500',
+                  fontSize: moderateScale(18),
+                }}>
+                Add
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
 
-export default ChatScreen;
+export default HealthDisease;
 
 const styles = StyleSheet.create({
   messageBubble: {
@@ -591,13 +860,11 @@ const styles = StyleSheet.create({
     marginBottom: moderateScale(25),
   },
   aiMessage: {
-    // backgroundColor: 'lightgreen',
-    alignSelf: 'center',
-    width: '105%',
+    width: '100%',
     marginBottom: moderateScale(15),
   },
   messageText: {
-    fontSize: moderateScale(16),
+    fontSize: moderateScale(18),
     letterSpacing: 1,
     // color: DARK,
     color: SECONDARY,
@@ -616,6 +883,25 @@ const styles = StyleSheet.create({
     color: PRIMARY,
     fontSize: moderateScale(16),
   },
+
+  // Model response card
+  ingreCard: {
+    // borderWidth: 0.5,
+    padding: moderateScale(10),
+    marginVertical: moderateScale(3),
+    borderRadius: moderateScale(4),
+    gap: moderateScale(10),
+  },
+  commonTextStyle: {
+    color: DARK,
+  },
+  ingredientText: {
+    fontSize: moderateScale(20),
+    fontWeight: '500',
+  },
+  descriptionText: {fontSize: moderateScale(14), fontWeight: '500'},
+  good_bad_neutralText: {fontSize: moderateScale(17), fontWeight: '500'},
+  adviceText: {fontSize: moderateScale(15), fontWeight: '500'},
 });
 
 // scraps

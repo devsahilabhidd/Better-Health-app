@@ -8,18 +8,24 @@ import {
 } from 'react-native';
 import React from 'react';
 import {moderateScale} from 'react-native-size-matters';
-import {DARK, PRIMARY, SECONDARY, TERTIARY} from '../constants/colors';
+import {
+  DARK,
+  LIGHT_GREEN,
+  PRIMARY,
+  SECONDARY,
+  TERTIARY,
+} from '../constants/colors';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {featuresTitle} from '../constants/featuresTitle';
 import {MasonryFlashList} from '@shopify/flash-list';
 import {useNavigation} from '@react-navigation/native';
 
-const FoodCards = () => {
+const FoodCards = ({route}) => {
+  const {items} = route.params;
   const navigation = useNavigation();
   return (
     <View style={styles.cardContainer}>
       <MasonryFlashList
-        data={featuresTitle}
+        data={items}
         numColumns={2}
         keyExtractor={item => item.id} // Ensure that the keyExtractor is explicitly provided
         renderItem={({item}) => (
@@ -27,13 +33,13 @@ const FoodCards = () => {
             key={item.id} // Ensure the key is directly passed
             onPress={() => {
               const screen = item.screen || 'ChatScreen';
-              // navigation.navigate('DemoChat');
               // navigation.navigate('ChatScreen');
               navigation.navigate(screen);
             }}
             style={({pressed}) => [
               {
-                backgroundColor: pressed ? TERTIARY : item.color,
+                borderColor: pressed ? LIGHT_GREEN : TERTIARY,
+                backgroundColor: PRIMARY,
               },
               styles.card,
             ]}
@@ -43,7 +49,7 @@ const FoodCards = () => {
             <FontAwesome5
               name="long-arrow-alt-right"
               size={moderateScale(20)}
-              color={DARK}
+              color={SECONDARY}
             />
           </Pressable>
         )}
@@ -64,8 +70,8 @@ const styles = StyleSheet.create({
     backgroundColor: PRIMARY,
   },
   card: {
-    // borderWidth: 3,
-    // borderColor: SECONDARY,
+    borderWidth: 3,
+    // borderColor: TERTIARY,
     borderRadius: moderateScale(10),
     padding: moderateScale(10),
     marginHorizontal: moderateScale(10),
@@ -77,5 +83,6 @@ const styles = StyleSheet.create({
     color: DARK,
     fontWeight: '500',
     fontSize: moderateScale(16),
+    color: SECONDARY,
   },
 });

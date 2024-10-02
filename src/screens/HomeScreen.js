@@ -1,21 +1,24 @@
-import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {moderateScale, moderateVerticalScale} from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import {PRIMARY, SECONDARY, TERTIARY} from '../constants/colors';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import TopTabs from '../components/TopTabs';
-import FoodCards from '../components/FoodCards';
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = () => {
   return (
     <View
       style={{
+        // borderWidth: 1,
         flex: 1,
         backgroundColor: PRIMARY,
       }}>
       {/* LOGO */}
+
       <View
         style={{
+          // borderWidth: 2,
+          // borderColor: 'white',
           flexDirection: 'row', // Align horizontally
           justifyContent: 'center',
           alignItems: 'center',
@@ -30,11 +33,11 @@ const HomeScreen = ({navigation}) => {
           }}>
           Better
         </Text>
-        <FontAwesome5
+        {/* <FontAwesome5
           name="running"
           size={moderateScale(50)}
           color={TERTIARY}
-        />
+        /> */}
         <Text
           style={{
             fontWeight: 'bold',
@@ -45,8 +48,8 @@ const HomeScreen = ({navigation}) => {
         </Text>
       </View>
 
-      <FoodCards />
-      {/* <TopTabs  /> */}
+      {/* <FoodCards /> */}
+      <TopTabs />
     </View>
   );
 };

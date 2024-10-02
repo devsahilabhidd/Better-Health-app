@@ -1,8 +1,6 @@
 import {
-  Button,
   StyleSheet,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
   ScrollView,
@@ -11,12 +9,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import ChatScreenLogo from '../../components/ChatScreenLogo';
 
-import {
-  GoogleGenerativeAI,
-  HarmCategory,
-  HarmBlockThreshold,
-} from '@google/generative-ai';
-import Markdown from 'react-native-markdown-display';
+import {GoogleGenerativeAI} from '@google/generative-ai';
 import {moderateScale} from 'react-native-size-matters';
 import {API_KEY} from '../../constants/geminiapikey';
 import {
@@ -26,7 +19,6 @@ import {
   SECONDARY,
   TERTIARY,
 } from '../../constants/colors';
-import {useFocusEffect} from '@react-navigation/native';
 
 const RandomFoodFactScreen = () => {
   const [isLoading, setIsLoading] = useState('');
@@ -34,7 +26,6 @@ const RandomFoodFactScreen = () => {
   const [inputMessage, setInputMessage] = useState('Start');
   const apiKey = API_KEY;
   const genAI = new GoogleGenerativeAI(apiKey);
-  // const isFocus = useFocusEffect();
 
   const generationConfig = {
     temperature: 1,
@@ -142,7 +133,7 @@ const RandomFoodFactScreen = () => {
           }}>
           {isLoading ? (
             <View style={styles.sendButton}>
-              <ActivityIndicator size={'large'} color={'green'} />
+              <ActivityIndicator size={'large'} color={PRIMARY} />
             </View>
           ) : (
             <TouchableOpacity
