@@ -9,7 +9,7 @@ export const featuresTitle = [
     id: 3,
     title: 'I am suffering from a health condition and should I eat it?',
     color: '#4ECDC4',
-    screen: 'HealthDisease',
+    screen: 'UnderWorking',
   },
   {
     id: 4,
@@ -51,7 +51,7 @@ export const PERSONAL_CARE_TITLES = [
     title:
       'I want to know more about the ingredients in my personal care product.',
     color: '#FF6B6B',
-    screen: 'ReadFoodLabel',
+    screen: 'ReadPersonalCareLabel',
   },
 
   {

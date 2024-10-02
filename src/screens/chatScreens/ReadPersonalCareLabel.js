@@ -46,7 +46,9 @@ const ChatScreen = ({navigation}) => {
   const [chats, setChats] = useState([]);
   const [imageArray, setimageArray] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
-  const [prompt, setPrompt] = useState('You are an Health and Food Expert.');
+  const [prompt, setPrompt] = useState(
+    'You are an Health, Personal Care Products, and Skin Care Routine Expert.',
+  );
 
   // Add image states and functions
   const [imageDetail, setImageDetails] = useState(null);
@@ -144,7 +146,7 @@ const ChatScreen = ({navigation}) => {
 
     const model = genAI.getGenerativeModel({
       model: 'gemini-1.5-flash',
-      systemInstruction: `When analyzing a list of ingredients on a product label, break down each component in a friendly, easy-to-understand way, and in a tabular form. Explain whether each ingredient is good, neutral, or harmful for someone. Provide dietary advice in a supportive tone, suggesting healthier alternatives where needed. Always conclude with a summary that gives clear recommendations while keeping the tone positive and helpful. If possible also try to guess the product.
+      systemInstruction: `When analyzing a list of ingredients on a product label, break down each component in a friendly, easy-to-understand way, and in a tabular form. Explain whether each ingredient is good, neutral, or harmful for someone. Provide advice on the potential benefits and risks of each ingredient. Always conclude with a summary that gives clear recommendations while keeping the tone positive and helpful. If possible also try to guess the product.
       `,
     });
 
@@ -157,7 +159,9 @@ const ChatScreen = ({navigation}) => {
 
       console.log('Login history ------------> ');
       console.log(history);
-      const promptForSend = prompt || 'You are an Health and Food Expert.';
+      const promptForSend =
+        prompt ||
+        'You are an Health, Personal Care Products, and Skin Care Routine Expert.';
       setPrompt('');
       console.log(promptForSend);
 
@@ -764,57 +768,3 @@ const styles = StyleSheet.create({
   good_bad_neutralText: {fontSize: moderateScale(17), fontWeight: '500'},
   adviceText: {fontSize: moderateScale(15), fontWeight: '500'},
 });
-
-// scraps
-// const uploadImageToBB = async imageDetail => {
-//   const url = `https://api.imgbb.com/1/upload?key=${BB_API_KEY}`;
-
-//   setUploadImageLoading(true);
-
-//   if (imageDetail === null) {
-//     // setUploadImageModel(false);
-//     setUploadImageLoading(false);
-//     ToastAndroid.show('You need to select image for upload', 1000);
-//     return;
-//   }
-
-//   const formData = new FormData();
-//   formData.append('image', {
-//     uri: imageDetail.assets?.[0]?.uri,
-//     type: imageDetail.assets?.[0]?.type,
-//     name: imageDetail.assets?.[0]?.fileName,
-//     fileName: imageDetail.assets?.[0]?.fileName,
-//   });
-
-//   try {
-//     console.log('indide bb upload try ');
-//     const response = await fetch(url, {
-//       method: 'POST',
-//       body: formData,
-//       headers: {
-//         'Content-Type': 'multipart/form-data',
-//       },
-//     });
-
-//     const res = await response.json();
-//     // console.log(res);
-//     if (response.ok) {
-//       console.log('Response --> ', res);
-//       console.log('print the uri ', res.data.url);
-//       const imageUrl = res.data.url;
-//       setImageUri(imageUrl);
-//       // setImages([...images, imageUrl]);
-//       // setImages(prevImages => [imageUrl, ...prevImages]);
-//       setUploadImageLoading(false);
-//     } else {
-//       console.error('Upload failed:', res);
-//       setUploadImageLoading(false);
-//       if (res.error) {
-//         console.error('Error:', res.error.message);
-//       }
-//     }
-//   } catch (e) {
-//     console.error('Error --> ', e);
-//     setUploadImageLoading(false);
-//   }
-// };

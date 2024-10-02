@@ -8,6 +8,8 @@ import RandomFoodFactScreen from '../screens/chatScreens/RandomFoodFactScreen';
 import HealthDisease from '../screens/chatScreens/HealthDisease';
 import ReadFoodLabel from '../screens/chatScreens/ReadFoodLabel';
 import UnderWorking from '../screens/UnderWorking';
+import {PRIMARY, SECONDARY, TERTIARY} from '../constants/colors';
+import ReadPersonalCareLabel from '../screens/chatScreens/ReadPersonalCareLabel';
 
 const Stack = createNativeStackNavigator();
 
@@ -37,6 +39,11 @@ function AppNavigation() {
           options={{animation: 'slide_from_right', headerShown: false}}
         />
         <Stack.Screen
+          name="ReadPersonalCareLabel"
+          component={ReadPersonalCareLabel}
+          options={{animation: 'slide_from_right', headerShown: false}}
+        />
+        <Stack.Screen
           name="RandomFoodFactScreen"
           component={RandomFoodFactScreen}
           options={{animation: 'slide_from_right', headerShown: false}}
@@ -55,6 +62,10 @@ function AppNavigation() {
           options={{
             animation: 'slide_from_right',
             headerShown: true,
+            headerTintColor: SECONDARY,
+            headerStyle: {
+              backgroundColor: PRIMARY,
+            },
           }}
         />
       </Stack.Navigator>
