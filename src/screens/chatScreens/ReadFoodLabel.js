@@ -660,8 +660,7 @@ const markdownStyles = StyleSheet.create({
   },
   text: {
     color: SECONDARY,
-    fontSize: moderateScale(17),
-    // fontWeight: '400',
+    fontSize: moderateScale(15),
   },
   heading2: {
     fontFamily: 'InterBold',
@@ -671,36 +670,32 @@ const markdownStyles = StyleSheet.create({
     marginBottom: 5,
     lineHeight: 30,
   },
-  body: {
-    fontSize: 16,
-    // fontFamily: 'Inter',
-    // lineHeight: 24,
-  },
   code_block: {
     borderWidth: 1,
     borderColor: 'red',
   },
   table: {
-    borderWidth: 0.5, // Border around the whole table
-    borderColor: SECONDARY, // Set your desired border color
-    borderRadius: 5, // Optional: To round the edges slightly
+    borderWidth: 0.5,
+    borderColor: SECONDARY,
+    borderRadius: 5,
   },
   th: {
-    borderWidth: 0.3, // Border for table headers
+    borderWidth: 0.3,
     borderColor: SECONDARY,
+    alignItems: 'center',
 
     // padding: 5,
-    backgroundColor: TERTIARY, // Optional: Background color for headers
-    fontSize: 15, // Font size for header text
-    fontWeight: '500', // Bold header text
-    color: 'red',
+    backgroundColor: TERTIARY,
+  },
+  tr: {
+    borderBottomWidth: 0,
   },
   td: {
-    borderWidth: 0.3, // Border for table data cells
+    borderWidth: 0.3,
     borderColor: SECONDARY,
-    // padding: 5,
-    fontSize: 16, // Font size for table data
-    color: 'red',
+    // justifyContent: 'center',
+    alignItems: 'center',
+    padding: 3,
   },
 });
 
@@ -725,7 +720,7 @@ const styles = StyleSheet.create({
     marginBottom: moderateScale(15),
   },
   messageText: {
-    fontSize: moderateScale(18),
+    fontSize: moderateScale(15),
     letterSpacing: 1,
     // color: DARK,
     color: SECONDARY,
