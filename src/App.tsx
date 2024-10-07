@@ -1,9 +1,9 @@
 import {StatusBar, StyleSheet} from 'react-native';
 import React from 'react';
-import AppNavigation from './src/navigation';
-import {PRIMARY, TERTIARY} from './src/constants/colors';
+import {PRIMARY, TERTIARY} from './constants/colors';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {PaperProvider} from 'react-native-paper';
+import AppNavigation from './navigation';
 const App = () => {
   return (
     <>

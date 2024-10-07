@@ -1,12 +1,22 @@
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {Pressable, StyleSheet, Text, useColorScheme, View} from 'react-native';
 import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {LIGHT_GREEN, PRIMARY, SECONDARY, TERTIARY} from '../constants/colors';
+import {
+  LIGHT,
+  LIGHT_GREEN,
+  PRIMARY,
+  SECONDARY,
+  TERTIARY,
+} from '../constants/colors';
 import {moderateScale, verticalScale} from 'react-native-size-matters';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
 const WelcomeScreen = () => {
   const navigation = useNavigation();
+
+  const colorTheme = useColorScheme();
+  console.log(colorTheme);
+
   return (
     <SafeAreaView
       style={{flex: 1, justifyContent: 'center', backgroundColor: PRIMARY}}>
@@ -70,7 +80,7 @@ const WelcomeScreen = () => {
         </View>
 
         <Pressable
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => navigation.navigate('HomeScreen')}
           style={({pressed}) => [
             {
               backgroundColor: pressed ? LIGHT_GREEN : TERTIARY,
@@ -86,7 +96,7 @@ const WelcomeScreen = () => {
           <Text
             className="text-primary font-bold"
             style={{
-              color: PRIMARY,
+              color: SECONDARY,
               fontSize: moderateScale(20),
               fontWeight: '500',
             }}>
