@@ -51,13 +51,13 @@ export const PERSONAL_CARE_TITLES = [
     title:
       'I want to know more about the ingredients in my personal care product.',
     color: '#FF6B6B',
-    screen: 'ReadPersonalCareLabel',
+    screen: 'UnderWorking',
   },
 
   {
     id: 2,
     title: 'I want to know a random fact about personal care products.',
     color: '#FFBF69',
-    screen: 'RandomFoodFactScreen',
+    screen: 'UnderWorking',
   },
 ];

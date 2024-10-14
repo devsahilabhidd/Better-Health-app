@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen';
@@ -8,13 +8,16 @@ import RandomFoodFactScreen from './screens/chatScreens/RandomFoodFactScreen';
 import HealthDisease from './screens/chatScreens/HealthDisease';
 import ReadFoodLabel from './screens/chatScreens/ReadFoodLabel';
 import UnderWorking from './screens/UnderWorking';
-import {PRIMARY, SECONDARY, TERTIARY} from './constants/colors';
+import {COLORS, PRIMARY, SECONDARY, TERTIARY} from './constants/colors';
 import ReadPersonalCareLabel from './screens/chatScreens/ReadPersonalCareLabel';
-// import LoginScreen from '../screens/auth/LoginScreen';
+import LoginScreen from './screens/auth/LoginScreen';
+import {ThemeContext} from './context/ThemeContext';
 
 const Stack = createNativeStackNavigator();
 
 function AppNavigation() {
+  const {theme} = useContext(ThemeContext);
+  let activeColor = COLORS[theme];
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -29,14 +32,14 @@ function AppNavigation() {
             headerShown: false,
           }}
         />
-        {/* <Stack.Screen
+        <Stack.Screen
           name="LoginScreen"
           component={LoginScreen}
           options={{
             animation: 'slide_from_right',
             headerShown: false,
           }}
-        /> */}
+        />
 
         <Stack.Screen
           name="ChatScreen"
@@ -72,9 +75,9 @@ function AppNavigation() {
           options={{
             animation: 'slide_from_right',
             headerShown: true,
-            headerTintColor: SECONDARY,
+            headerTintColor: activeColor.SECONDARY,
             headerStyle: {
-              backgroundColor: PRIMARY,
+              backgroundColor: activeColor.PRIMARY,
             },
           }}
         />

@@ -1,55 +1,40 @@
-import {Pressable, StyleSheet, Text, useColorScheme, View} from 'react-native';
-import React from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {
-  LIGHT,
-  LIGHT_GREEN,
-  PRIMARY,
-  SECONDARY,
-  TERTIARY,
-} from '../constants/colors';
+  Button,
+  Pressable,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+} from 'react-native';
+import React, {useContext} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {COLORS} from '../constants/colors';
 import {moderateScale, verticalScale} from 'react-native-size-matters';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
+import {AppContext} from '../context/AppContext';
+import {ThemeContext} from '../context/ThemeContext';
 const WelcomeScreen = () => {
-  const navigation = useNavigation();
+  // const theme = useColorScheme();
+  const {theme} = useContext(ThemeContext);
+  let activeColor = COLORS[theme];
+  console.log(theme);
 
-  const colorTheme = useColorScheme();
-  console.log(colorTheme);
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView
-      style={{flex: 1, justifyContent: 'center', backgroundColor: PRIMARY}}>
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        backgroundColor: activeColor.PRIMARY,
+      }}>
       <View
         style={{
           position: 'absolute',
           top: 0,
           width: '100%',
           padding: moderateScale(10),
-        }}>
-        {/* <Text
-          style={{
-            flexDirection: 'row',
-            fontWeight: 'bold',
-            color: SECONDARY,
-            fontSize: moderateScale(20),
-          }}>
-          Better
-          <FontAwesome5
-            name="running"
-            size={moderateScale(25)}
-            color={TERTIARY}
-          />
-          <Text>
-            <Text
-              style={{
-                color: TERTIARY,
-              }}>
-              Health
-            </Text>
-          </Text>
-        </Text> */}
-      </View>
+        }}></View>
       <View
         style={{
           padding: moderateScale(10),
@@ -61,17 +46,18 @@ const WelcomeScreen = () => {
           <Text
             style={{
               textAlign: 'center',
-              color: SECONDARY,
+              color: activeColor.SECONDARY,
               fontWeight: '900',
               fontSize: moderateScale(40),
             }}>
-            Welcome to <Text style={{color: TERTIARY}}>Better Health</Text> Your
-            Personalized Health Assistant
+            Welcome to{' '}
+            <Text style={{color: activeColor.TERTIARY}}>Better Health</Text>{' '}
+            Your Personalized Health Assistant
           </Text>
           <Text
             style={{
               textAlign: 'center',
-              color: SECONDARY,
+              color: activeColor.SECONDARY,
               fontWeight: '400',
               fontSize: moderateScale(15),
             }}>
@@ -80,27 +66,29 @@ const WelcomeScreen = () => {
         </View>
 
         <Pressable
-          onPress={() => navigation.navigate('HomeScreen')}
+          onPress={() => navigation.navigate('LoginScreen')}
           style={({pressed}) => [
             {
-              backgroundColor: pressed ? LIGHT_GREEN : TERTIARY,
+              backgroundColor: pressed
+                ? activeColor.LIGHT_GREEN
+                : activeColor.TERTIARY,
             },
             {
               padding: moderateScale(5),
-              width: '90%',
+              width: '80%',
               justifyContent: 'center',
               alignItems: 'center',
-              borderRadius: moderateScale(5),
+              borderRadius: moderateScale(20),
             },
           ]}>
           <Text
             className="text-primary font-bold"
             style={{
-              color: SECONDARY,
+              color: activeColor.LIGHT,
               fontSize: moderateScale(20),
               fontWeight: '500',
             }}>
-            Home Page
+            Next
           </Text>
         </Pressable>
       </View>

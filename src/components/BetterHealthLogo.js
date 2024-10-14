@@ -1,13 +1,16 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
-import {LIGHT_GREEN, SECONDARY, TERTIARY} from '../constants/colors';
+import React, {useContext} from 'react';
+import {COLORS} from '../constants/colors';
 import {moderateScale} from 'react-native-size-matters';
+import {ThemeContext} from '../context/ThemeContext';
 
 const BetterHealthLogo = () => {
+  const {theme} = useContext(ThemeContext);
+  let activeColor = COLORS[theme];
   return (
     <View
       style={{
-        flex: 1,
+        // flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
@@ -15,7 +18,7 @@ const BetterHealthLogo = () => {
       <Text
         style={{
           fontWeight: 'bold',
-          color: SECONDARY,
+          color: activeColor.SECONDARY,
           fontSize: moderateScale(40),
         }}>
         Better
@@ -23,7 +26,7 @@ const BetterHealthLogo = () => {
       <Text
         style={{
           fontWeight: 'bold',
-          color: TERTIARY,
+          color: activeColor.TERTIARY,
           fontSize: moderateScale(40),
         }}>
         {' '}

@@ -6,7 +6,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import ChatScreenLogo from '../../components/ChatScreenLogo';
 
 import {GoogleGenerativeAI} from '@google/generative-ai';
@@ -14,13 +14,17 @@ import {moderateScale} from 'react-native-size-matters';
 import {API_KEY} from '../../constants/geminiapikey';
 import {
   BACKGROUND_COLOR,
+  COLORS,
   DARK,
   PRIMARY,
   SECONDARY,
   TERTIARY,
 } from '../../constants/colors';
+import {ThemeContext} from '../../context/ThemeContext';
 
 const RandomFoodFactScreen = () => {
+  const {theme} = useContext(ThemeContext);
+  let activeColor = COLORS[theme];
   const [isLoading, setIsLoading] = useState('');
   const [chats, setChats] = useState([]);
   const [inputMessage, setInputMessage] = useState('Start');
@@ -74,7 +78,7 @@ const RandomFoodFactScreen = () => {
         style={{
           // borderWidth: 1,
           flex: 1,
-          backgroundColor: PRIMARY,
+          backgroundColor: activeColor.PRIMARY,
           justifyContent: 'center',
         }}>
         <ChatScreenLogo />
@@ -85,8 +89,8 @@ const RandomFoodFactScreen = () => {
           // className= "bg-green-100"
           style={{
             // borderWidth: 1,
-            backgroundColor: BACKGROUND_COLOR,
-            borderColor: SECONDARY,
+            backgroundColor: activeColor.BACKGROUND_COLOR,
+            borderColor: activeColor.SECONDARY,
             borderRadius: moderateScale(10),
             marginHorizontal: moderateScale(10),
             borderRadius: moderateScale(10),
@@ -123,7 +127,7 @@ const RandomFoodFactScreen = () => {
             // borderColor: 'white',
             position: 'absolute',
             bottom: 0,
-            backgroundColor: PRIMARY,
+            backgroundColor: activeColor.PRIMARY,
             width: '100%',
             padding: moderateScale(10),
             marginTop: moderateScale(10),
@@ -133,7 +137,7 @@ const RandomFoodFactScreen = () => {
           }}>
           {isLoading ? (
             <View style={styles.sendButton}>
-              <ActivityIndicator size={'large'} color={PRIMARY} />
+              <ActivityIndicator size={'large'} color={activeColor.PRIMARY} />
             </View>
           ) : (
             <TouchableOpacity

@@ -1,18 +1,21 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import {moderateScale} from 'react-native-size-matters';
-import {PRIMARY, SECONDARY, TERTIARY} from '../constants/colors';
+import {COLORS, PRIMARY, SECONDARY, TERTIARY} from '../constants/colors';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import TopTabs from '../components/TopTabs';
 import BetterHealthLogo from '../components/BetterHealthLogo';
+import {ThemeContext} from '../context/ThemeContext';
 
 const HomeScreen = () => {
+  const {theme} = useContext(ThemeContext);
+  let activeColor = COLORS[theme];
   return (
     <View
       style={{
         // borderWidth: 1,
         flex: 1,
-        backgroundColor: PRIMARY,
+        backgroundColor: activeColor.PRIMARY,
       }}>
       {/* LOGO */}
 
@@ -37,24 +40,3 @@ const HomeScreen = () => {
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({
-  cardContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-  },
-  card: {
-    borderWidth: 3,
-    borderColor: SECONDARY,
-    borderRadius: moderateScale(10),
-    padding: moderateScale(10),
-    marginHorizontal: moderateScale(10),
-    marginVertical: moderateScale(5),
-    width: '40%',
-  },
-  cardText: {
-    color: SECONDARY,
-    fontWeight: '500',
-    fontSize: moderateScale(16),
-  },
-});

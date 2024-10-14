@@ -6,9 +6,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import {moderateScale} from 'react-native-size-matters';
 import {
+  COLORS,
   DARK,
   LIGHT_GREEN,
   PRIMARY,
@@ -18,12 +19,16 @@ import {
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {MasonryFlashList} from '@shopify/flash-list';
 import {useNavigation} from '@react-navigation/native';
+import {ThemeContext} from '../context/ThemeContext';
 
 const FoodCards = ({route}) => {
   const {items} = route.params;
   const navigation = useNavigation();
+  const {theme} = useContext(ThemeContext);
+  let activeColor = COLORS[theme];
   return (
-    <View style={styles.cardContainer}>
+    <View
+      style={[styles.cardContainer, {backgroundColor: activeColor.PRIMARY}]}>
       <MasonryFlashList
         data={items}
         numColumns={2}
@@ -38,18 +43,20 @@ const FoodCards = ({route}) => {
             }}
             style={({pressed}) => [
               {
-                borderColor: pressed ? LIGHT_GREEN : TERTIARY,
-                backgroundColor: PRIMARY,
+                borderColor: pressed ? LIGHT_GREEN : activeColor.TERTIARY,
+                backgroundColor: activeColor.PRIMARY,
               },
               styles.card,
             ]}
             // style={[styles.card, {backgroundColor: item.color}]}
           >
-            <Text style={styles.cardText}>{item.title}</Text>
+            <Text style={[styles.cardText, {color: activeColor.SECONDARY}]}>
+              {item.title}
+            </Text>
             <FontAwesome5
               name="long-arrow-alt-right"
               size={moderateScale(20)}
-              color={SECONDARY}
+              color={activeColor.SECONDARY}
             />
           </Pressable>
         )}
@@ -67,7 +74,6 @@ const styles = StyleSheet.create({
     paddingTop: moderateScale(30),
     flexDirection: 'row',
     flexWrap: 'wrap',
-    backgroundColor: PRIMARY,
   },
   card: {
     borderWidth: 3,
@@ -83,6 +89,5 @@ const styles = StyleSheet.create({
     color: DARK,
     fontWeight: '500',
     fontSize: moderateScale(16),
-    color: SECONDARY,
   },
 });
