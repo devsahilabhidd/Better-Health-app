@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import BetterHealthLogo from '../../components/BetterHealthLogo';
 import {ThemeContext} from '../../context/ThemeContext';
 import {COLORS} from '../../constants/colors';
@@ -13,10 +13,14 @@ import {moderateScale} from 'react-native-size-matters';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Buttom from '../../components/Buttom';
 import {useNavigation} from '@react-navigation/native';
+import {AuthContext} from '../../context/AuthContext';
+import LoadingModel from '../../components/LoadingModel';
 
 const LoginScreen = () => {
+  const {userInfo, login} = useContext(AuthContext);
   const {theme} = useContext(ThemeContext);
   let activeColor = COLORS[theme];
+  const [showModelLoading, setShowModelLoading] = useState(false);
   const navigation = useNavigation();
   return (
     <View
@@ -32,7 +36,12 @@ const LoginScreen = () => {
       </View>
       <Buttom
         onPress={() => {
-          navigation.navigate('Home');
+          setShowModelLoading(true);
+          setTimeout(() => {
+            login('Guest');
+            setShowModelLoading(false);
+            navigation.navigate('BottomTab');
+          }, 2000);
         }}
         title={'Login as a Guest'}
       />
@@ -68,6 +77,8 @@ const LoginScreen = () => {
           Login with Google
         </Text>
       </TouchableOpacity>
+
+      <LoadingModel showModelLoading={showModelLoading} />
     </View>
   );
 };

@@ -1,8 +1,8 @@
 // const light = false;
 export let THEME_COLOR = false;
 const light = THEME_COLOR;
-export const DARK = '#000000';
-export const LIGHT = '#ffffff';
+export const DARK = '#14141f'; // 000000
+export const LIGHT = '#ebfaeb'; // ffffff
 
 export const LIGHT_GREEN = '#00e68a';
 
@@ -22,6 +22,7 @@ export const COLORS = {
     LIGHT: LIGHT,
     DARK: DARK,
     LIGHT_GREEN: LIGHT_GREEN,
+    DANGER: '#DC4C64',
   },
   dark: {
     PRIMARY: DARK,
@@ -31,19 +32,20 @@ export const COLORS = {
     LIGHT: LIGHT,
     DARK: DARK,
     LIGHT_GREEN: LIGHT_GREEN,
+    DANGER: '#DC4C64',
   },
 };
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import {StyleSheet, Text, View} from 'react-native';
+import React from 'react';
 
 const colors = () => {
   return (
     <View>
       <Text>colors</Text>
     </View>
-  )
-}
+  );
+};
 
-export default colors
+export default colors;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});

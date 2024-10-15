@@ -4,6 +4,7 @@ import React, {createContext, useEffect, useState} from 'react';
 export const ThemeContext = createContext();
 
 export const ThemeProvider = ({children}) => {
+  // const getTheme = 'dark';
   // const getTheme = 'light';
   const getTheme = useColorScheme();
 

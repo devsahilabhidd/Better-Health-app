@@ -1,16 +1,18 @@
 import {
+  BackHandler,
   Button,
   Pressable,
   StyleSheet,
   Text,
+  ToastAndroid,
   useColorScheme,
   View,
 } from 'react-native';
-import React, {useContext} from 'react';
+import React, {useCallback, useContext, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {COLORS} from '../constants/colors';
 import {moderateScale, verticalScale} from 'react-native-size-matters';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {AppContext} from '../context/AppContext';
 import {ThemeContext} from '../context/ThemeContext';
 const WelcomeScreen = () => {
@@ -20,6 +22,33 @@ const WelcomeScreen = () => {
   console.log(theme);
 
   const navigation = useNavigation();
+
+  // Below state and functions are for back handeling
+  const [exitApp, setExitApp] = useState(0);
+  const backAction = () => {
+    // THIS FUNCTION IS TO PRESS BACK TWO TIMES TO EXIT THE APP
+    setTimeout(() => {
+      setExitApp(0);
+    }, 2000); // 2 seconds to tap second-time
+
+    if (exitApp === 0) {
+      setExitApp(exitApp + 1);
+
+      ToastAndroid.show('Tap back once more to exit', 1000);
+    } else if (exitApp === 1) {
+      BackHandler.exitApp();
+    }
+    return true;
+  };
+  useFocusEffect(
+    useCallback(() => {
+      BackHandler.addEventListener('hardwareBackPress', backAction);
+
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', backAction);
+      };
+    }),
+  );
 
   return (
     <SafeAreaView

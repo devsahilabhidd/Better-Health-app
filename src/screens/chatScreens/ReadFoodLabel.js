@@ -362,14 +362,14 @@ const ChatScreen = ({navigation}) => {
                 {(message.parts?.[0]?.text || message.parts?.[1]?.text) && (
                   <View
                     style={[
-                      styles.messageBubble,
+                      styles(activeColor).messageBubble,
                       message.role === 'user'
-                        ? styles.userMessage
-                        : styles.aiMessage,
+                        ? styles(activeColor).userMessage
+                        : styles(activeColor).aiMessage,
                     ]}>
                     {/* // User message  */}
                     {message.role === 'user' ? (
-                      <Text selectable style={styles.messageText}>
+                      <Text selectable style={styles(activeColor).messageText}>
                         {message.parts?.[0]?.text || message.parts?.[1]?.text}
                       </Text>
                     ) : (
@@ -419,7 +419,7 @@ const ChatScreen = ({navigation}) => {
             style={{
               // borderWidth: 1,
               // borderColor: 'white',
-              backgroundColor: showCameraBox ? null : activeColor.LIGHT_GREEN,
+              backgroundColor: showCameraBox ? null : activeColor.TERTIARY,
               // width: moderateScale(40),
               width: showCameraBox ? moderateScale(100) : moderateScale(40),
               height: moderateScale(40),
@@ -461,8 +461,7 @@ const ChatScreen = ({navigation}) => {
         <View
           style={{
             // borderWidth: 1,
-            backgroundColor: activeColor.LIGHT_GREEN,
-            color: activeColor.DARK,
+            backgroundColor: activeColor.TERTIARY,
             flex: 1,
             borderRadius: 20,
             paddingHorizontal: moderateScale(10),
@@ -526,6 +525,7 @@ const ChatScreen = ({navigation}) => {
             multiline
             placeholder="Type a message"
             placeholderTextColor={activeColor.PRIMARY}
+            color={activeColor.SECONDARY}
             value={inputMessage}
             onChangeText={text => {
               setInputMessage(text);
@@ -544,7 +544,7 @@ const ChatScreen = ({navigation}) => {
           {/* If userinput is empty */}
           {inputMessage === '' && base64Image === '' ? (
             isLoading ? (
-              <TouchableOpacity style={styles.sendButton}>
+              <TouchableOpacity style={styles(activeColor).sendButton}>
                 <ActivityIndicator
                   size={moderateScale(15)}
                   color={activeColor.PRIMARY}
@@ -555,13 +555,13 @@ const ChatScreen = ({navigation}) => {
                 onPress={() => {
                   ToastAndroid.show('You need to give some input first', 1000);
                 }}
-                style={styles.sendButton}>
+                style={styles(activeColor).sendButton}>
                 <Ionicons
                   name="send"
                   size={moderateScale(16)}
                   color={
                     inputMessage === '' && base64Image === ''
-                      ? 'lightgray'
+                      ? 'gray'
                       : activeColor.PRIMARY
                   }
                 />
@@ -579,7 +579,7 @@ const ChatScreen = ({navigation}) => {
                 );
                 chatFunctions(history);
               }}
-              style={styles.sendButton}>
+              style={styles(activeColor).sendButton}>
               <Ionicons
                 name="send"
                 size={moderateScale(16)}
@@ -705,66 +705,67 @@ const markdownStyles = activeColor =>
     },
   });
 
-const styles = StyleSheet.create({
-  messageBubble: {
-    // borderWidth: 1,
-    marginVertical: moderateScale(5),
-    padding: moderateScale(10),
-    paddingHorizontal: moderateScale(15),
-    borderRadius: moderateScale(15),
-    // maxWidth: '90%',
-  },
-  userMessage: {
-    alignSelf: 'flex-end',
-    backgroundColor: TERTIARY,
-    // borderTopRightRadius: 0,
-    maxWidth: '80%',
-    marginBottom: moderateScale(25),
-  },
-  aiMessage: {
-    width: '100%',
-    marginBottom: moderateScale(15),
-  },
-  messageText: {
-    fontSize: moderateScale(15),
-    letterSpacing: 1,
-    // color: DARK,
-    color: SECONDARY,
-    fontWeight: '400',
-  },
-  sendButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: LIGHT_GREEN,
-    height: moderateScale(40),
-    width: moderateScale(40),
-    borderRadius: moderateScale(40),
-    // marginLeft: 10,
-  },
-  sendButtonText: {
-    color: PRIMARY,
-    fontSize: moderateScale(16),
-  },
+const styles = activeColor =>
+  StyleSheet.create({
+    messageBubble: {
+      // borderWidth: 1,
+      marginVertical: moderateScale(5),
+      padding: moderateScale(10),
+      paddingHorizontal: moderateScale(15),
+      borderRadius: moderateScale(15),
+      // maxWidth: '90%',
+    },
+    userMessage: {
+      alignSelf: 'flex-end',
+      backgroundColor: activeColor.TERTIARY,
+      // borderTopRightRadius: 0,
+      maxWidth: '80%',
+      marginBottom: moderateScale(25),
+    },
+    aiMessage: {
+      width: '100%',
+      marginBottom: moderateScale(15),
+    },
+    messageText: {
+      fontSize: moderateScale(15),
+      letterSpacing: 1,
+      // color: DARK,
+      color: activeColor.SECONDARY,
+      fontWeight: '400',
+    },
+    sendButton: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: activeColor.TERTIARY,
+      height: moderateScale(40),
+      width: moderateScale(40),
+      borderRadius: moderateScale(40),
+      // marginLeft: 10,
+    },
+    sendButtonText: {
+      color: activeColor.PRIMARY,
+      fontSize: moderateScale(16),
+    },
 
-  // Model response card
-  ingreCard: {
-    // borderWidth: 0.5,
-    padding: moderateScale(10),
-    marginVertical: moderateScale(3),
-    borderRadius: moderateScale(4),
-    gap: moderateScale(10),
-  },
-  commonTextStyle: {
-    color: DARK,
-  },
-  ingredientText: {
-    fontSize: moderateScale(20),
-    fontWeight: '500',
-  },
-  descriptionText: {fontSize: moderateScale(14), fontWeight: '500'},
-  good_bad_neutralText: {fontSize: moderateScale(17), fontWeight: '500'},
-  adviceText: {fontSize: moderateScale(15), fontWeight: '500'},
-});
+    // Model response card
+    ingreCard: {
+      // borderWidth: 0.5,
+      padding: moderateScale(10),
+      marginVertical: moderateScale(3),
+      borderRadius: moderateScale(4),
+      gap: moderateScale(10),
+    },
+    commonTextStyle: {
+      color: DARK,
+    },
+    ingredientText: {
+      fontSize: moderateScale(20),
+      fontWeight: '500',
+    },
+    descriptionText: {fontSize: moderateScale(14), fontWeight: '500'},
+    good_bad_neutralText: {fontSize: moderateScale(17), fontWeight: '500'},
+    adviceText: {fontSize: moderateScale(15), fontWeight: '500'},
+  });
 
 // scraps
 // const uploadImageToBB = async imageDetail => {
