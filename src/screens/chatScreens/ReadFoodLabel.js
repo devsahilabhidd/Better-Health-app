@@ -41,7 +41,8 @@ import {ThemeContext} from '../../context/ThemeContext';
 const ChatScreen = ({navigation}) => {
   const {theme} = useContext(ThemeContext);
   const activeColor = COLORS[theme];
-
+  console.log('printing active color ', activeColor);
+  console.log('printing active color ', theme);
   const [isLoading, setIsLoading] = useState(false);
   const [uploadImageLoading, setUploadImageLoading] = useState(false);
 
