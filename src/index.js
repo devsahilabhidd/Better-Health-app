@@ -17,8 +17,11 @@ import SplashScreen from './screens/SplashScreen';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Profile from './screens/Profile';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {moderateScale} from 'react-native-size-matters';
+import ScannerScreen from './screens/ScannerScreen';
+import {View} from 'react-native';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -48,6 +51,44 @@ export function BottomTab() {
               size={focused ? moderateScale(30) : moderateScale(25)}
               color={focused ? activeColor.TERTIARY : activeColor.SECONDARY}
             />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="ScannerScreen"
+        component={ScannerScreen}
+        options={{
+          headerShown: false,
+          headerTitle: 'Blog App',
+          tabBarLabel: () => {},
+          tabBarIcon: ({focused}) => (
+            <View
+              style={{
+                width: 100,
+                height: 100,
+                alignItems: 'center',
+              }}>
+              <View
+                style={{
+                  width: 60,
+                  height: 60,
+                  borderWidth: focused ? 2 : 0.5,
+                  borderColor: focused
+                    ? activeColor.TERTIARY
+                    : activeColor.SECONDARY,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 40,
+                  elevation: 10,
+                  backgroundColor: activeColor.PRIMARY,
+                }}>
+                <MaterialIcons
+                  name={focused ? 'qr-code-scanner' : 'qr-code-scanner'}
+                  size={focused ? moderateScale(35) : moderateScale(30)}
+                  color={focused ? activeColor.TERTIARY : activeColor.SECONDARY}
+                />
+              </View>
+            </View>
           ),
         }}
       />
