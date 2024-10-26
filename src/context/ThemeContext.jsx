@@ -5,8 +5,8 @@ export const ThemeContext = createContext();
 
 export const ThemeProvider = ({children}) => {
   // const getTheme = 'dark';
-  const getTheme = 'light';
-  // const getTheme = useColorScheme();
+  // const getTheme = 'light';
+  const getTheme = useColorScheme();
 
   const [theme, setTheme] = useState(getTheme);
   useEffect(() => {

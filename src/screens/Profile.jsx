@@ -21,8 +21,6 @@ const Profile = () => {
   const {logout} = useContext(AuthContext);
   const {theme} = useContext(ThemeContext);
   const activeColor = COLORS[theme];
-  console.log('printing active color ', activeColor);
-  console.log('printing active color ', theme);
 
   const [showModelLoading, setShowModelLoading] = useState(false);
   const [showEditeProfileMenu, setShowEditeProfileMenu] = useState(false);
@@ -30,6 +28,7 @@ const Profile = () => {
 
   return (
     <ScrollView
+      showsVerticalScrollIndicator={false}
       style={[
         styles(activeColor).container,
         {backgroundColor: activeColor.PRIMARY},
@@ -227,7 +226,10 @@ const Profile = () => {
       </View>
 
       <LoadingModel showModelLoading={showModelLoading} />
-      <EditeProfileMenu showEditeProfileMenu={showEditeProfileMenu} />
+      <EditeProfileMenu
+        showEditeProfileMenu={showEditeProfileMenu}
+        setShowEditeProfileMenu={setShowEditeProfileMenu}
+      />
     </ScrollView>
   );
 };
