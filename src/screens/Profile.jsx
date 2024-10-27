@@ -213,12 +213,12 @@ const Profile = () => {
             Medical Conditions
           </Text>
           <InfoItem
-            icon="medical-services"
+            icon="medical-information"
             text="Diabetes"
             color={activeColor.SECONDARY}
           />
           <InfoItem
-            icon="healing"
+            icon="medical-information"
             text="Asthma"
             color={activeColor.SECONDARY}
           />
