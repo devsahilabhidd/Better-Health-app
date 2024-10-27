@@ -17,6 +17,7 @@ import {ThemeContext} from '../context/ThemeContext';
 import {AuthContext} from '../context/AuthContext';
 import LoadingModel from '../components/LoadingModel';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import FactsCarouselHome from '../components/FactsCarouselHome';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -75,6 +76,7 @@ const HomeScreen = () => {
         <BetterHealthLogo />
       </View>
 
+      <FactsCarouselHome />
       {/* <FoodCards /> */}
       <TopTabs />
     </View>
