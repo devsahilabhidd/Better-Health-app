@@ -17,7 +17,7 @@ const PaginationCarousel = ({items, paginationIndex}) => {
               styles.dot,
               {
                 backgroundColor:
-                  paginationIndex === index ? activeColor.TERTIARY : 'gray',
+                  paginationIndex === index ? activeColor.TERTIARY : 'lightgray',
               },
             ]}
           />

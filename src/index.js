@@ -49,7 +49,7 @@ export function BottomTab() {
             <Ionicons
               name={focused ? 'home' : 'home-outline'}
               size={focused ? moderateScale(30) : moderateScale(25)}
-              color={focused ? activeColor.TERTIARY : activeColor.SECONDARY}
+              color={focused ? activeColor.SECONDARY : 'gray'}
             />
           ),
         }}
@@ -72,21 +72,32 @@ export function BottomTab() {
                 style={{
                   width: 60,
                   height: 60,
-                  borderWidth: focused ? 2 : 0.5,
+                  borderTopWidth: 1,
+                  borderLeftWidth: 0.3,
+                  borderRightWidth: 0.3,
                   borderColor: focused
                     ? activeColor.TERTIARY
                     : activeColor.SECONDARY,
                   justifyContent: 'center',
                   alignItems: 'center',
                   borderRadius: 40,
-                  elevation: 10,
                   backgroundColor: activeColor.PRIMARY,
                 }}>
-                <MaterialIcons
-                  name={focused ? 'qr-code-scanner' : 'qr-code-scanner'}
-                  size={focused ? moderateScale(35) : moderateScale(30)}
-                  color={focused ? activeColor.TERTIARY : activeColor.SECONDARY}
-                />
+                <View
+                  style={{
+                    width: 50,
+                    height: 50,
+                    backgroundColor: activeColor.TERTIARY,
+                    borderRadius: 40,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <MaterialIcons
+                    name={'document-scanner'}
+                    size={focused ? moderateScale(35) : moderateScale(30)}
+                    color={activeColor.PRIMARY}
+                  />
+                </View>
               </View>
             </View>
           ),
@@ -103,7 +114,7 @@ export function BottomTab() {
               // name={'user'}
               name={focused ? 'user' : 'user-o'}
               size={focused ? moderateScale(30) : moderateScale(25)}
-              color={focused ? activeColor.TERTIARY : activeColor.SECONDARY}
+              color={focused ? activeColor.SECONDARY : 'gray'}
             />
           ),
         }}
