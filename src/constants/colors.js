@@ -23,6 +23,7 @@ export const COLORS = {
     DARK: DARK,
     LIGHT_GREEN: LIGHT_GREEN,
     DANGER: '#DC4C64',
+    GRAY: 'lightgray',
   },
   dark: {
     PRIMARY: DARK,
@@ -33,6 +34,7 @@ export const COLORS = {
     DARK: DARK,
     LIGHT_GREEN: LIGHT_GREEN,
     DANGER: '#DC4C64',
+    GRAY: 'gray',
   },
 };
 import {StyleSheet, Text, View} from 'react-native';

@@ -28,7 +28,7 @@ export const AuthProvider = ({children}) => {
     setUserInfo('');
     setIsLoading(false);
   };
-
+  
   const isLoggedIn = async () => {
     try {
       setSplashLoading(true);

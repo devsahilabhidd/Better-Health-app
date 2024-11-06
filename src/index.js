@@ -44,12 +44,18 @@ export function BottomTab() {
         options={{
           headerShown: false,
           headerTitle: 'Blog App',
-          tabBarLabel: () => {},
+          tabBarLabel: 'Home',
+          tabBarLabelStyle: {
+            fontSize: moderateScale(12),
+            color: activeColor.SECONDARY,
+            marginBottom: moderateScale(3),
+            fontWeight: '500',
+          },
           tabBarIcon: ({focused}) => (
             <Ionicons
               name={focused ? 'home' : 'home-outline'}
-              size={focused ? moderateScale(30) : moderateScale(25)}
-              color={focused ? activeColor.SECONDARY : 'gray'}
+              size={focused ? moderateScale(16) : moderateScale(16)}
+              color={activeColor.SECONDARY}
             />
           ),
         }}
@@ -94,7 +100,7 @@ export function BottomTab() {
                   }}>
                   <MaterialIcons
                     name={'document-scanner'}
-                    size={focused ? moderateScale(35) : moderateScale(30)}
+                    size={focused ? moderateScale(25) : moderateScale(20)}
                     color={activeColor.PRIMARY}
                   />
                 </View>
@@ -108,13 +114,19 @@ export function BottomTab() {
         component={Profile}
         options={{
           headerShown: false,
-          tabBarLabel: () => {},
+          tabBarLabel: 'Profile',
+          tabBarLabelStyle: {
+            fontSize: moderateScale(12),
+            color: activeColor.SECONDARY,
+            marginBottom: moderateScale(3),
+            fontWeight: '500',
+          },
           tabBarIcon: ({focused}) => (
             <FontAwesome
               // name={'user'}
               name={focused ? 'user' : 'user-o'}
-              size={focused ? moderateScale(30) : moderateScale(25)}
-              color={focused ? activeColor.SECONDARY : 'gray'}
+              size={focused ? moderateScale(16) : moderateScale(16)}
+              color={activeColor.SECONDARY}
             />
           ),
         }}

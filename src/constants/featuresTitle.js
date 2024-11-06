@@ -31,36 +31,36 @@ export const featuresTitle = [
     screen: 'RandomFoodFactScreen',
   },
 
-  {
-    id: 6,
-    title: 'I want to learn how I can cook healthier meals',
-    color: '#FF9F1C',
-    screen: 'UnderWorking',
-  },
-  {
-    id: 7,
-    title: 'I want to know about a particular food item',
-    color: 'pink',
-    screen: 'UnderWorking',
-  },
-  {
-    id: 12,
-    title: 'I want to learn how I can cook healthier meals',
-    color: '#FF9F1C',
-    screen: 'UnderWorking',
-  },
-  {
-    id: 7232,
-    title: 'I want to know about a particular food item',
-    color: 'pink',
-    screen: 'UnderWorking',
-  },
-  {
-    id: 232,
-    title: 'I want to know about a particular food item',
-    color: 'pink',
-    screen: 'UnderWorking',
-  },
+  // {
+  //   id: 6,
+  //   title: 'I want to learn how I can cook healthier meals',
+  //   color: '#FF9F1C',
+  //   screen: 'UnderWorking',
+  // },
+  // {
+  //   id: 7,
+  //   title: 'I want to know about a particular food item',
+  //   color: 'pink',
+  //   screen: 'UnderWorking',
+  // },
+  // {
+  //   id: 12,
+  //   title: 'I want to learn how I can cook healthier meals',
+  //   color: '#FF9F1C',
+  //   screen: 'UnderWorking',
+  // },
+  // {
+  //   id: 7232,
+  //   title: 'I want to know about a particular food item',
+  //   color: 'pink',
+  //   screen: 'UnderWorking',
+  // },
+  // {
+  //   id: 232,
+  //   title: 'I want to know about a particular food item',
+  //   color: 'pink',
+  //   screen: 'UnderWorking',
+  // },
 ];
 
 export const PERSONAL_CARE_TITLES = [

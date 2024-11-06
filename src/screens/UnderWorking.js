@@ -1,6 +1,6 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 import React, {useContext} from 'react';
-import {COLORS, PRIMARY, TERTIARY} from '../constants/colors';
+import {COLORS} from '../constants/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {moderateScale} from 'react-native-size-matters';
 import {ThemeContext} from '../context/ThemeContext';
