@@ -11,10 +11,11 @@ import {
   ToastAndroid,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {moderateScale, verticalScale} from 'react-native-size-matters';
 import {
   BACKGROUND_COLOR,
+  COLORS,
   DARK,
   LIGHT,
   LIGHT_GREEN,
@@ -36,8 +37,12 @@ import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import LottieView from 'lottie-react-native';
 import BetterHealthLogo from '../../components/BetterHealthLogo';
 import Markdown from 'react-native-markdown-display';
-
+import {ThemeContext} from '../../context/ThemeContext';
 const ChatScreen = ({navigation}) => {
+  const {theme} = useContext(ThemeContext);
+  const activeColor = COLORS[theme];
+  console.log('printing active color ', activeColor);
+  console.log('printing active color ', theme);
   const [isLoading, setIsLoading] = useState(false);
   const [uploadImageLoading, setUploadImageLoading] = useState(false);
 
@@ -145,6 +150,9 @@ const ChatScreen = ({navigation}) => {
     const model = genAI.getGenerativeModel({
       model: 'gemini-1.5-flash',
       systemInstruction: `When analyzing a list of ingredients on a product label, break down each component in a friendly, easy-to-understand way, and in a tabular form. Explain whether each ingredient is good, neutral, or harmful for someone. Provide dietary advice in a supportive tone, suggesting healthier alternatives where needed. Always conclude with a summary that gives clear recommendations while keeping the tone positive and helpful. If possible also try to guess the product.
+
+      the formaget of the talbe should be 
+      Ingredients, Description, Good/Neutral/Harmful, Dietary Adivce
       `,
     });
 
@@ -241,7 +249,7 @@ const ChatScreen = ({navigation}) => {
       style={{
         flex: 1,
         // borderWidth: 1,
-        backgroundColor: PRIMARY,
+        backgroundColor: activeColor.PRIMARY,
         justifyContent: 'center',
       }}>
       {/* LOGO */}
@@ -270,7 +278,7 @@ const ChatScreen = ({navigation}) => {
           <FontAwesome
             name="arrow-left"
             size={moderateScale(20)}
-            color={TERTIARY}
+            color={activeColor.TERTIARY}
           />
         </Pressable>
 
@@ -278,7 +286,7 @@ const ChatScreen = ({navigation}) => {
           style={{
             flexDirection: 'row',
             fontWeight: 'bold',
-            color: SECONDARY,
+            color: activeColor.SECONDARY,
             fontSize: moderateScale(20),
           }}>
           Better
@@ -290,7 +298,7 @@ const ChatScreen = ({navigation}) => {
           <Text>
             <Text
               style={{
-                color: TERTIARY,
+                color: activeColor.TERTIARY,
               }}>
               {' '}
               Health
@@ -304,7 +312,7 @@ const ChatScreen = ({navigation}) => {
         style={{
           // borderWidth: 1,
           // marginVertical: verticalScale(10),
-          backgroundColor: BACKGROUND_COLOR,
+          backgroundColor: activeColor.BACKGROUND_COLOR,
           borderRadius: moderateScale(5),
           marginHorizontal: moderateScale(5),
           borderRadius: moderateScale(10),
@@ -355,14 +363,14 @@ const ChatScreen = ({navigation}) => {
                 {(message.parts?.[0]?.text || message.parts?.[1]?.text) && (
                   <View
                     style={[
-                      styles.messageBubble,
+                      styles(activeColor).messageBubble,
                       message.role === 'user'
-                        ? styles.userMessage
-                        : styles.aiMessage,
+                        ? styles(activeColor).userMessage
+                        : styles(activeColor).aiMessage,
                     ]}>
                     {/* // User message  */}
                     {message.role === 'user' ? (
-                      <Text selectable style={styles.messageText}>
+                      <Text selectable style={styles(activeColor).messageText}>
                         {message.parts?.[0]?.text || message.parts?.[1]?.text}
                       </Text>
                     ) : (
@@ -375,7 +383,7 @@ const ChatScreen = ({navigation}) => {
                           justifyContent: 'center',
                           alignItems: 'center',
                         }}>
-                        <Markdown style={markdownStyles}>
+                        <Markdown style={markdownStyles(activeColor)}>
                           {message.parts?.[0]?.text || message.parts?.[1]?.text}
                         </Markdown>
                       </View>
@@ -396,7 +404,7 @@ const ChatScreen = ({navigation}) => {
           position: 'absolute',
           bottom: 0,
           // minHeight: moderateScale(50),
-          backgroundColor: PRIMARY,
+          backgroundColor: activeColor.PRIMARY,
           maxHeight: 200,
           width: '100%',
           padding: moderateScale(10),
@@ -412,7 +420,7 @@ const ChatScreen = ({navigation}) => {
             style={{
               // borderWidth: 1,
               // borderColor: 'white',
-              backgroundColor: showCameraBox ? null : LIGHT_GREEN,
+              backgroundColor: showCameraBox ? null : activeColor.TERTIARY,
               // width: moderateScale(40),
               width: showCameraBox ? moderateScale(100) : moderateScale(40),
               height: moderateScale(40),
@@ -427,7 +435,7 @@ const ChatScreen = ({navigation}) => {
                   <Feather
                     name="camera"
                     size={moderateScale(25)}
-                    color={LIGHT_GREEN}
+                    color={activeColor.LIGHT_GREEN}
                   />
                 </TouchableOpacity>
 
@@ -435,7 +443,7 @@ const ChatScreen = ({navigation}) => {
                   <Feather
                     name="image"
                     size={moderateScale(25)}
-                    color={LIGHT_GREEN}
+                    color={activeColor.LIGHT_GREEN}
                   />
                 </TouchableOpacity>
               </>
@@ -444,7 +452,7 @@ const ChatScreen = ({navigation}) => {
                 <Octicons
                   name="plus"
                   size={moderateScale(23)}
-                  color={PRIMARY}
+                  color={activeColor.PRIMARY}
                 />
               </TouchableOpacity>
             )}
@@ -454,8 +462,7 @@ const ChatScreen = ({navigation}) => {
         <View
           style={{
             // borderWidth: 1,
-            backgroundColor: LIGHT_GREEN,
-            color: DARK,
+            backgroundColor: activeColor.TERTIARY,
             flex: 1,
             borderRadius: 20,
             paddingHorizontal: moderateScale(10),
@@ -496,7 +503,7 @@ const ChatScreen = ({navigation}) => {
                     <Ionicons
                       name="close"
                       size={moderateScale(20)}
-                      color={PRIMARY}
+                      color={activeColor.PRIMARY}
                     />
                   </TouchableOpacity>
                   <Image
@@ -518,7 +525,8 @@ const ChatScreen = ({navigation}) => {
           <TextInput
             multiline
             placeholder="Type a message"
-            placeholderTextColor={PRIMARY}
+            placeholderTextColor={activeColor.PRIMARY}
+            color={activeColor.SECONDARY}
             value={inputMessage}
             onChangeText={text => {
               setInputMessage(text);
@@ -537,22 +545,25 @@ const ChatScreen = ({navigation}) => {
           {/* If userinput is empty */}
           {inputMessage === '' && base64Image === '' ? (
             isLoading ? (
-              <TouchableOpacity style={styles.sendButton}>
-                <ActivityIndicator size={moderateScale(15)} color={PRIMARY} />
+              <TouchableOpacity style={styles(activeColor).sendButton}>
+                <ActivityIndicator
+                  size={moderateScale(15)}
+                  color={activeColor.PRIMARY}
+                />
               </TouchableOpacity>
             ) : (
               <Pressable
                 onPress={() => {
                   ToastAndroid.show('You need to give some input first', 1000);
                 }}
-                style={styles.sendButton}>
+                style={styles(activeColor).sendButton}>
                 <Ionicons
                   name="send"
                   size={moderateScale(16)}
                   color={
                     inputMessage === '' && base64Image === ''
-                      ? 'lightgray'
-                      : PRIMARY
+                      ? 'gray'
+                      : activeColor.PRIMARY
                   }
                 />
               </Pressable>
@@ -569,14 +580,14 @@ const ChatScreen = ({navigation}) => {
                 );
                 chatFunctions(history);
               }}
-              style={styles.sendButton}>
+              style={styles(activeColor).sendButton}>
               <Ionicons
                 name="send"
                 size={moderateScale(16)}
                 color={
                   inputMessage === '' && base64Image === ''
                     ? 'lightgray'
-                    : PRIMARY
+                    : activeColor.PRIMARY
                 }
               />
             </TouchableOpacity>
@@ -595,7 +606,7 @@ const ChatScreen = ({navigation}) => {
         }}>
         <View
           style={{
-            backgroundColor: TERTIARY,
+            backgroundColor: activeColor.TERTIARY,
             height: moderateScale(200),
             width: moderateScale(300),
             borderRadius: moderateScale(20),
@@ -605,7 +616,7 @@ const ChatScreen = ({navigation}) => {
           }}>
           <Text
             style={{
-              color: LIGHT,
+              color: activeColor.LIGHT,
               fontSize: moderateScale(20),
               fontWeight: '400',
             }}>
@@ -623,7 +634,7 @@ const ChatScreen = ({navigation}) => {
             <TouchableOpacity onPress={() => setShowPopup(false)}>
               <Text
                 style={{
-                  color: LIGHT,
+                  color: activeColor.LIGHT,
                   fontWeight: '500',
                   fontSize: moderateScale(18),
                 }}>
@@ -634,7 +645,7 @@ const ChatScreen = ({navigation}) => {
               onPress={() => navigation.navigate('PersonalInfo')}>
               <Text
                 style={{
-                  color: LIGHT,
+                  color: activeColor.LIGHT,
                   fontWeight: '500',
                   fontSize: moderateScale(18),
                 }}>
@@ -649,121 +660,113 @@ const ChatScreen = ({navigation}) => {
 };
 
 export default ChatScreen;
-const markdownStyles = StyleSheet.create({
-  heading1: {
-    fontFamily: 'InterBlack',
-    color: '#212020',
-    marginTop: 15,
-    marginBottom: 10,
+const markdownStyles = activeColor =>
+  StyleSheet.create({
+    heading1: {
+      fontFamily: 'InterBlack',
+      color: '#212020',
+      marginTop: 15,
+      marginBottom: 10,
+      lineHeight: 40,
+    },
+    text: {
+      color: activeColor.SECONDARY,
+      fontSize: moderateScale(15),
+    },
+    heading2: {
+      fontFamily: 'InterBold',
+      color: '#404040',
+      marginTop: 10,
+      marginBottom: 5,
+      lineHeight: 30,
+    },
+    code_block: {
+      borderWidth: 1,
+      borderColor: 'red',
+    },
+    table: {
+      borderWidth: 0.5,
+      borderColor: activeColor.SECONDARY,
+      borderRadius: 5,
+    },
+    th: {
+      borderWidth: 0.3,
+      borderColor: activeColor.SECONDARY,
+      alignItems: 'center',
+      backgroundColor: activeColor.TERTIARY,
+    },
+    tr: {
+      borderBottomWidth: 0,
+    },
+    td: {
+      borderWidth: 0.3,
+      borderColor: activeColor.SECONDARY,
+      alignItems: 'center',
+      padding: 3,
+    },
+  });
 
-    lineHeight: 40,
-  },
-  text: {
-    color: SECONDARY,
-    fontSize: moderateScale(17),
-    // fontWeight: '400',
-  },
-  heading2: {
-    fontFamily: 'InterBold',
-    color: '#404040',
+const styles = activeColor =>
+  StyleSheet.create({
+    messageBubble: {
+      // borderWidth: 1,
+      marginVertical: moderateScale(5),
+      padding: moderateScale(10),
+      paddingHorizontal: moderateScale(15),
+      borderRadius: moderateScale(15),
+      // maxWidth: '90%',
+    },
+    userMessage: {
+      alignSelf: 'flex-end',
+      backgroundColor: activeColor.TERTIARY,
+      // borderTopRightRadius: 0,
+      maxWidth: '80%',
+      marginBottom: moderateScale(25),
+    },
+    aiMessage: {
+      width: '100%',
+      marginBottom: moderateScale(15),
+    },
+    messageText: {
+      fontSize: moderateScale(15),
+      letterSpacing: 1,
+      // color: DARK,
+      color: activeColor.SECONDARY,
+      fontWeight: '400',
+    },
+    sendButton: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: activeColor.TERTIARY,
+      height: moderateScale(40),
+      width: moderateScale(40),
+      borderRadius: moderateScale(40),
+      // marginLeft: 10,
+    },
+    sendButtonText: {
+      color: activeColor.PRIMARY,
+      fontSize: moderateScale(16),
+    },
 
-    marginTop: 10,
-    marginBottom: 5,
-    lineHeight: 30,
-  },
-  body: {
-    fontSize: 16,
-    // fontFamily: 'Inter',
-    // lineHeight: 24,
-  },
-  code_block: {
-    borderWidth: 1,
-    borderColor: 'red',
-  },
-  table: {
-    borderWidth: 0.5, // Border around the whole table
-    borderColor: SECONDARY, // Set your desired border color
-    borderRadius: 5, // Optional: To round the edges slightly
-  },
-  th: {
-    borderWidth: 0.3, // Border for table headers
-    borderColor: SECONDARY,
-
-    // padding: 5,
-    backgroundColor: TERTIARY, // Optional: Background color for headers
-    fontSize: 15, // Font size for header text
-    fontWeight: '500', // Bold header text
-    color: 'red',
-  },
-  td: {
-    borderWidth: 0.3, // Border for table data cells
-    borderColor: SECONDARY,
-    // padding: 5,
-    fontSize: 16, // Font size for table data
-    color: 'red',
-  },
-});
-
-const styles = StyleSheet.create({
-  messageBubble: {
-    // borderWidth: 1,
-    marginVertical: moderateScale(5),
-    padding: moderateScale(10),
-    paddingHorizontal: moderateScale(15),
-    borderRadius: moderateScale(15),
-    // maxWidth: '90%',
-  },
-  userMessage: {
-    alignSelf: 'flex-end',
-    backgroundColor: TERTIARY,
-    // borderTopRightRadius: 0,
-    maxWidth: '80%',
-    marginBottom: moderateScale(25),
-  },
-  aiMessage: {
-    width: '100%',
-    marginBottom: moderateScale(15),
-  },
-  messageText: {
-    fontSize: moderateScale(18),
-    letterSpacing: 1,
-    // color: DARK,
-    color: SECONDARY,
-    fontWeight: '400',
-  },
-  sendButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: LIGHT_GREEN,
-    height: moderateScale(40),
-    width: moderateScale(40),
-    borderRadius: moderateScale(40),
-    // marginLeft: 10,
-  },
-  sendButtonText: {
-    color: PRIMARY,
-    fontSize: moderateScale(16),
-  },
-
-  // Model response card
-  ingreCard: {
-    // borderWidth: 0.5,
-    padding: moderateScale(10),
-    marginVertical: moderateScale(3),
-    borderRadius: moderateScale(4),
-    gap: moderateScale(10),
-  },
-  commonTextStyle: {
-    color: DARK,
-  },
-  ingredientText: {
-    fontSize: moderateScale(20),
-    fontWeight: '500',
-  },
-  descriptionText: {fontSize: moderateScale(14), fontWeight: '500'},
-  good_bad_neutralText: {fontSize: moderateScale(17), fontWeight: '500'},
-  adviceText: {fontSize: moderateScale(15), fontWeight: '500'},
-});
+    // Model response card
+    ingreCard: {
+      // borderWidth: 0.5,
+      padding: moderateScale(10),
+      marginVertical: moderateScale(3),
+      borderRadius: moderateScale(4),
+      gap: moderateScale(10),
+    },
+    commonTextStyle: {
+      color: DARK,
+    },
+    ingredientText: {
+      fontSize: moderateScale(20),
+      fontWeight: '500',
+    },
+    descriptionText: {fontSize: moderateScale(14), fontWeight: '500'},
+    good_bad_neutralText: {fontSize: moderateScale(17), fontWeight: '500'},
+    adviceText: {fontSize: moderateScale(15), fontWeight: '500'},
+  });
 
 // scraps
 // const uploadImageToBB = async imageDetail => {

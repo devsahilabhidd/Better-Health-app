@@ -43,6 +43,24 @@ export const featuresTitle = [
   //   color: 'pink',
   //   screen: 'UnderWorking',
   // },
+  // {
+  //   id: 12,
+  //   title: 'I want to learn how I can cook healthier meals',
+  //   color: '#FF9F1C',
+  //   screen: 'UnderWorking',
+  // },
+  // {
+  //   id: 7232,
+  //   title: 'I want to know about a particular food item',
+  //   color: 'pink',
+  //   screen: 'UnderWorking',
+  // },
+  // {
+  //   id: 232,
+  //   title: 'I want to know about a particular food item',
+  //   color: 'pink',
+  //   screen: 'UnderWorking',
+  // },
 ];
 
 export const PERSONAL_CARE_TITLES = [
@@ -51,13 +69,13 @@ export const PERSONAL_CARE_TITLES = [
     title:
       'I want to know more about the ingredients in my personal care product.',
     color: '#FF6B6B',
-    screen: 'ReadPersonalCareLabel',
+    screen: 'UnderWorking',
   },
 
   {
     id: 2,
     title: 'I want to know a random fact about personal care products.',
     color: '#FFBF69',
-    screen: 'RandomFoodFactScreen',
+    screen: 'UnderWorking',
   },
 ];
